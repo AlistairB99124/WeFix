@@ -1,0 +1,78 @@
+﻿@model IEnumerable<WeFix.Domain.Entities.Fault>
+@using WeFix.Logic
+@using WeFix.Domain.Context
+@using GoogleMaps.LocationServices
+@{
+    var helper = new Helpers();
+    var db = new EFDbContext();
+    var gls = new GoogleLocationService();
+}
+@{
+    ViewBag.Title = "PublicIndex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div style="padding-left:15px;padding-right:15px;width:100%;position:relative;z-index:3;">  
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4" style="border: 3px solid #E6E6FA; border-radius:5px;">
+                <!-- Post -->
+                <div class="post">
+                    <div class="user-block">
+                        @if (item.ImageURL != null)
+                        {
+                            <img class="img-circle img-bordered-sm" src="@item.ImageURL.Replace("~", "../..")" alt="user image">
+                        }
+                        <span class="username">
+                            <a href="#">@item.FaultId</a>
+                        </span>
+                        <span style="color:#fff" class="description"><strong>Date</strong> @item.DateCreated</span>
+                        <span style="color:#fff" class="description"><strong>Category</strong> @item.Category.Name</span>
+                        @{ string subName = "";
+                            if (db.SubCategories.Find(item.SubCategoryId)!=null){
+                                subName = db.SubCategories.Find(item.SubCategoryId).Name;
+                            } }
+                        <span style="color:#fff" class="description"><strong>Sub-Category</strong> @subName</span>
+                        <span style="color:#fff" class="description"><strong>Severity</strong> @item.SeverityId</span>
+                    </div>
+                    <!-- /.user-block -->
+                    <p style="color:#fff">
+                        @{ var address = helper.GetAddressFromLatLong(item.Latitude, item.Longitude);}
+                        <strong>Address:</strong> @address
+                    </p>
+                    <p style="color:#fff">
+                        <strong>Description:</strong> @item.Description
+                    </p>
+                    @if (item.ManagerId != null)
+                {
+                    var departmentManager = db.DepartmentManagers.Find(item.ManagerId);
+                    var user = db.Users.Find(departmentManager.UserId);
+                        <p>Assigned to: @user.FirstName @user.LastName</p>
+                    }
+                    else
+                    {
+                        <p style="color:#fff">Unassigned</p>
+                    }
+                    @if (item.Resolved)
+                {
+                        <p class="label-success">This fault has been resolved</p>
+                    }
+                    else
+                    {
+                        <p class="label-warning">This fault has not been resolved</p>
+                    }
+                    <ul class="list-inline">
+                        <li>
+                            <a href="#" onclick="location.href='@Url.Action("Edit","Faults",new { id = item.FaultId })'" style="color:#fff" class="link-black text-sm"><i style="color:#fff" class="fa fa-edit margin-r-5"></i> Edit</a>
+
+                        </li>
+                        <li>
+                            <a href="#" onclick="location.href='@Url.Action("DetailsForPublic","Faults",new { id = item.FaultId })'" style="color:#fff" class="link-black text-sm"><i style="color:#fff" class="fa fa-info margin-r-5"></i> Details</a>
+                        </li>                        
+                    </ul>
+                </div>
+                <!-- /.post -->
+            </div>
+                            }
+    </div>
+    </div>

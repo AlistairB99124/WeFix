@@ -1,0 +1,54 @@
+﻿@model List<WeFix.Domain.Entities.ChatMessage>
+    @{
+        var db = new WeFix.Domain.Context.EFDbContext();
+        var fUser = ViewBag.FromUser as WeFix.Domain.Entities.User;
+        var tUser = ViewBag.ToUser as WeFix.Domain.Entities.User;
+    }
+@{
+    ViewBag.Title = "ChatRoom";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="box" style="position:relative;z-index:100;">
+    <div class="box-header">
+        <h4>Chat Room</h4>
+    </div>
+    <div class="box-body">
+        @using (Html.BeginForm())
+        {
+            <div class="input-group">
+                <input type="text" name="q" id="message" class="form-control" placeholder="Send Message...">
+                <span class="input-group-btn">
+                    <button type="submit" name="send" id="sendmessage" class="btn btn-flat">
+                        <i class="fa fa-envelope"></i>
+                    </button>
+                </span>
+                <input type="hidden" name="ToUser" value="@tUser.Id" />
+                <input type="hidden" name="FromUser" value="@fUser.Id" />
+            </div>
+        }
+
+        <input type="hidden" id="displayname" />
+        <ul id="discussion" class="timeline">
+            @foreach (var item in Model)
+            {
+                var fromUser = db.Users.Find(item.fromUserId);
+                <li class="timeline-inverted">
+                    <div class="timeline-badge"><i class="glyphicon glyphicon-check"></i></div><div class="timeline-panel">
+                        <div class="timeline-heading">
+                            <h4 class="timeline-title">@fromUser.FirstName @fromUser.LastName</h4><p>
+                                <small class="text-muted">
+                                    <i class="glyphicon glyphicon-time"></i> @item.Time_Stamp
+                                </small>
+                            </p>
+                        </div><div class="timeline-body">
+                            <p>@item.Body</p>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="box-footer">
+
+    </div>
+</div>

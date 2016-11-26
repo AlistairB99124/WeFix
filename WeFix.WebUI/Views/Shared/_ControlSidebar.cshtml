@@ -1,0 +1,28 @@
+﻿<aside class="control-sidebar control-sidebar-dark">
+    @* BEGIN Tabs *@
+    <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+        <li class="active"><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+    </ul>
+    @* END Tabs *@
+    <div class="tab-content">
+        @* BEGIN Home Tab *@
+        <div class="tab-pane active" id="control-sidebar-home-tab">
+            <h3 class="control-sidebar-heading">Management</h3>
+            <ul class="control-sidebar-menu">
+                <li>
+                    <a href="#" onclick="location.href='@Url.Action("Dashboard","Organisations",null)'">
+                        <i class="menu-icon fa fa-adn bg-red"></i>
+
+                        <div class="menu-info">
+                            <h4 class="control-sidebar-subheading">Manage Organisation</h4>
+                        </div>
+                    </a>
+                </li>
+            </ul>           
+        </div>
+        @* END Home Tab *@
+       
+    </div>
+</aside>
+@* Add the sidebar's background. This div must be placed immediately after the control sidebar *@
+<div class="control-sidebar-bg"></div>

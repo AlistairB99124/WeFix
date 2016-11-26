@@ -1,0 +1,107 @@
+﻿@model WeFix.Domain.Entities.Department
+@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Edit Department";
+    Layout = "~/Views/Shared/_AdminLTELayout.cshtml";
+}
+@{ 
+    var db = new WeFix.Domain.Context.EFDbContext();
+    var userId = HttpContext.Current.User.Identity.GetUserId();
+    var selectCountry = new SelectList(db.Countries, "CountryName", "CountryName", "South Africa");
+    var CategorySelect = new SelectList(db.Categories, "CategoryId", "Name");
+    var orgMan = (from x in db.OrganisationManagers where x.UserId == userId select x).FirstOrDefault();
+    int orgId = 0;
+    if (orgMan != null)
+    {
+        orgId = (from x in db.Organisations where x.OrganisationId == orgMan.OrganisationId select x.OrganisationId).FirstOrDefault();
+
+    }
+}
+<div style="position:relative;z-index:5">
+<!-- SELECT2 EXAMPLE -->
+@using (Html.BeginForm())
+{
+<div class="box box-default">
+    <div class="box-header with-border">
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button type="button" onclick="location.href='@Url.Action("Management","Organisations",null)'" class="btn btn-box-tool"><i class="fa fa-remove"></i></button>
+        </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="row">
+            <div class="col-xs-6">
+                <!-- /.form-group -->
+                @Html.AntiForgeryToken()
+                    
+                    @Html.HiddenFor(model => model.DepartmentId)
+                    <div class="form-group">
+                        <label style="color:#333">Address Line 1</label>
+                        @Html.EditorFor(model => model.AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label style="color:#333">Address Line 2</label>
+                        @Html.EditorFor(model => model.AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label style="color:#333">City</label>
+                        @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label style="color:#333">Country</label>
+                        @Html.DropDownListFor(model => model.Country, selectCountry, new { @class = "form-control select2", @style = "width:100%" })
+                        @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label style="color:#333">Postal Code</label>
+                        @Html.EditorFor(model => model.PostalCode, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.PostalCode, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label style="color:#333">Category</label>
+                    @Html.DropDownListFor(model => model.CategoryId, CategorySelect, new { @class = "form-control select2", @style = "width:100%" })
+                    @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label style="color:#333">Department Name</label>
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label style="color:#333">Organisation</label>
+                    <input type="text" class="form-control" value="@Model.Organisation.Name" readonly="readonly" disabled="disabled" />
+                    <input type="hidden" name="OrgId" value="@orgId" />   
+                </div>
+                <div class="form-group">
+                    <label style="color:#333">Jurisdiction</label>
+                    <input type="number" value="@Model.Jurisdiction.ToString()" min="1" step="0.1" data-number-to-fixed="2" data-number-stepfactor="100" class="form-control" id="c1" name="jurisdiction" style="text-align:right; padding-right:15px; color:#333; width:100%;" />
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-offset-5 col-xs-7" style="padding-top:50px;">
+                        <input type="submit" value="Edit" class="btn btn-default btn-flat" />
+                    </div>
+                </div>
+                <!-- /.form-group -->
+            </div>
+            <!-- /.col -->      
+        </div>
+    </div>
+    <div class="box-footer">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    </div>
+</div>
+}
+</div>
+<script>
+    webshims.setOptions('forms-ext', {
+        replaceUI: 'auto',
+        types: 'number'
+    });
+    webshims.polyfill('forms forms-ext');
+</script>

@@ -1,0 +1,118 @@
+﻿@model WeFix.Domain.Entities.Department
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Department</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AddressLine2, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PostalCode, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PostalCode, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PostalCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.CategoryId, "CategoryId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{ 
+                    var db = new WeFix.Domain.Context.EFDbContext();
+                    var categories = (from x in db.Categories select x).ToList();
+                }
+                <select id="CategoryList" class="form-control" onchange="SelectCategory()">
+                    <option value="0">Please Select a Category</option>
+                    @foreach(var x in categories)
+                    {
+                        <option value="@x.CategoryId">@x.Name</option>
+                    }
+                </select>
+                <input type="hidden" id="CategoryResult" name="CategoryResult" />
+                @*@Html.DropDownList("Name", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })*@
+                <label id="CategoryError" class="text-danger"></label>
+            </div>
+        </div>
+        @using Microsoft.AspNet.Identity
+        <div class="form-group">
+            @Html.LabelFor(model => model.OrganisationId, "OrganisationId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{ 
+                    string userId = HttpContext.Current.User.Identity.GetUserId();
+                    var orgMan = (from x in db.OrganisationManagers where x.UserId == userId select x).FirstOrDefault();
+                    var org = (from x in db.Organisations where x.OrganisationId == orgMan.OrganisationId select x).FirstOrDefault();
+                }
+                <label class="control-label">@org.Name</label>
+                <input name="OrgId" value="@org.OrganisationId"/>
+                @*@Html.DropDownList("OrganisationId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.OrganisationId, "", new { @class = "text-danger" })*@
+                
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Dashboard","Organisations",null,new { @class="btn btn-default" })
+</div>
+<script type="text/javascript">
+    var CategoryList = document.getElementById('CategoryList');
+    var CategoryResult = document.getElementById('CategoryResult');
+    function SelectCategory() {
+        CategoryResult.value = CategoryList.value;
+    }
+</script>

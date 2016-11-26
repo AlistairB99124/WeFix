@@ -1,0 +1,150 @@
+﻿@using System.Web.Optimization
+@using Microsoft.AspNet.Identity
+@using WeFix.Domain.Entities
+@{
+    OrganisationManager orgMan;
+    DepartmentManager deptMan;
+    string userId = null;
+    User _user = null;
+    try
+    {
+        var db = new WeFix.Domain.Context.EFDbContext();
+        userId = HttpContext.Current.User.Identity.GetUserId();
+
+        orgMan = (from x in db.OrganisationManagers where x.UserId == userId select x).FirstOrDefault();
+        deptMan = (from x in db.DepartmentManagers where x.UserId == userId select x).FirstOrDefault();
+        _user = db.Users.Find(userId);
+    }
+    catch
+    {
+        orgMan = null;
+        deptMan = null;
+        userId = null;
+    }
+
+}
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>@ViewBag.Title - WeFix</title>
+
+        <link href="~/Content/css/font-awesome.min.css" rel="stylesheet">
+        <link href="~/Content/css/GuardianHack.css" rel="stylesheet" />
+        <link href="~/Content/css/skins/skin-black.css" rel="stylesheet" />
+        <link href="~/Content/css/bootstrap-select.css" rel="stylesheet" />
+        <link href="~/Content/css/jquery.ui.chatbox.css" rel="stylesheet" />
+        @Styles.Render("~/Bundles/css")
+        <link href="~/Content/js/plugins/ContextMenu/jquery.contextMenu.css" rel="stylesheet" />
+        <script src="~/Content/js/plugins/Quantize/colour-theif.js"></script>
+        <script src="~/Content/js/plugins/Quantize/Quantize.js"></script>
+        <script src="~/Content/js/plugins/jquery/jquery.js"></script>
+        <script src="~/Content/js/plugins/bootstrap/bootstrap.js"></script>
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        @if (IsSectionDefined("AddToHead"))
+        {
+            @RenderSection("AddToHead", required: false)
+        }
+        <style>
+            body{
+                background:none;
+                background-color:none;
+                background-image: url(../../Content/img/background.jpg);
+                -webkit-background-size: cover;
+                -moz-background-size: cover;
+                -o-background-size: cover;
+                background-size: cover;
+            }
+            .example-modal .modal {
+                position: relative;
+                top: auto;
+                bottom: auto;
+                right: auto;
+                left: auto;
+                display: block;
+                z-index: 3;
+            }
+
+            .example-modal .modal {
+                background: transparent !important;
+            }
+        </style>
+    </head>
+    <body class="hold-transition skin-black sidebar-mini">
+        <div class="wrapper">
+            @Html.Partial("_Header")
+            @Html.Partial("_Sidebar")
+
+            <div class="content-wrapper content-wrapper-hack">
+                <div class="fh5co-overlay"></div>
+                <section class="content content-hack" style="z-index:5;">                    
+                    @RenderBody()
+                   
+                   
+                </section>
+            </div>
+            @if (orgMan != null || deptMan != null)
+            {
+                @Html.Partial("_ControlSidebar")
+            }
+
+        </div>
+        <div id="OnlineUsers" class="hide-chat hidden" style="width:180px; position:fixed; bottom:0; right:0; z-index:10000;float:right; margin-right:15px;background:#f39c12; color:#333;">
+            @* BEGIN Messages *@
+            <div>
+                <div id="chat_widnow">
+                    <div style="background-color:#f39c12" id="chat_title_bar">
+                        <span class="col-sm-9 text-green"><strong>Online Users</strong></span>
+                        <div id="chat_min_button">
+                            <i style="color:#fcc72c" class="fa fa-envelope-o"></i>
+                        </div>
+                    </div>
+                    <div id="chat_box" style="display: none;overflow-y:auto;">
+                    </div>
+                </div>
+                <div id="chat_div"></div>
+                @if (userId != null)
+                {
+                    <input id="hdId" type="hidden" value="@userId" />
+                            <input id="hdUserName" type="hidden" value="@_user.FirstName" />
+                            <input id="hdnCurrentUserName" type="hidden" value="@_user.FirstName" />
+                            <input id="hdnCurrentUserID" type="hidden" value="@userId" />
+                }
+                else
+                {
+                    <input id="hdId" type="hidden" value="" />
+                            <input id="hdUserName" type="hidden" value="" />
+                            <input id="hdnCurrentUserName" type="hidden" value="" />
+                            <input id="hdnCurrentUserID" type="hidden" value="" />
+                }
+
+                @* END Messages *@
+            </div>
+
+        </div>
+        
+        @Scripts.Render("~/Bundles/js")
+        <script src="~/Content/js/plugins/SignalR/jquery.signalR-2.2.1.min.js"></script>
+        <script src="~/signalr/hubs"></script>
+        <script src="~/Content/js/plugins/ChatRoom/jquery.ui.chatbox.js"></script>
+        <script src="~/Content/js/plugins/ChatRoom/chatboxManager.js"></script>
+        @if (IsSectionDefined("AddToFoot"))
+        {
+            @RenderSection("AddToFoot", required: false)
+        }
+        <script src="~/Content/js/plugins/ContextMenu/jquery.contextMenu.js"></script>
+        <script src="~/Content/js/plugins/ContextMenu/jquery.ui.position.js"></script>
+        <script type="text/javascript">
+            function showUsers() {
+                document.getElementById('OnlineUsers').setAttribute('class','');
+            }
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/js/bootstrap-select.min.js"></script>
+    </body>
+</html>

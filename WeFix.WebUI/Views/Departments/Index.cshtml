@@ -1,0 +1,46 @@
+﻿@model IEnumerable<WeFix.Domain.Entities.Department>
+@{ var db = new WeFix.Domain.Context.EFDbContext();}
+<p>
+    <a href="#" onclick="CreateDepartment()" class="btn btn-flat btn-primary">Add New Department</a>
+</p>
+<hr/>
+@foreach (var item in Model)
+{
+    var category = (from x in db.Categories where x.CategoryId == item.CategoryId select x).FirstOrDefault();
+    <!-- Post -->
+    <div class="post">
+        <div class="user-block">
+            <img class="img-circle img-bordered-sm" src="~/Content/img/@category.Image" alt="user image">            
+            <span class="username">
+                <a href="#">@item.Name</a>
+                <a href="#" onclick="ConfirmDelete(@item.DepartmentId)" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+            </span>
+            @{ var cat = db.Categories.Find(item.CategoryId);}
+            <span class="description">Category - @cat.Name</span>
+            <span class="description">Jurisdiction @item.Jurisdiction KM</span>
+        </div>
+        <!-- /.user-block -->
+        <p>
+            @(item.AddressLine1 + ", " + item.AddressLine2 + ", " + item.City + ", " + item.Country + ", " + item.PostalCode)
+        </p>
+        <ul class="list-inline">
+            <li>
+                <a href="#" onclick="location.href='@Url.Action("Edit","Departments",new { id = item.DepartmentId })'" class="link-black text-sm"><i class="fa fa-edit margin-r-5"></i> Edit</a>
+                
+            </li>
+            <li>
+                <a href="#" onclick="location.href='@Url.Action("Details","Departments",new { id = item.DepartmentId })'" class="link-black text-sm"><i class="fa fa-info margin-r-5"></i> Details</a>
+            </li>            
+        </ul>
+    </div>
+    <!-- /.post -->
+}
+
+<script type="text/javascript">
+    function ConfirmDelete(id) {
+        var r = confirm("Are you sure you want to delete this department?")
+        if (r == true) {
+            location.href = '/Departments/DeleteFromDash/' + id;
+        }
+    }
+</script>

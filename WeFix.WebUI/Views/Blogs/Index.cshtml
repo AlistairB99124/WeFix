@@ -1,0 +1,82 @@
+﻿@model IEnumerable<WeFix.Domain.Entities.Blog>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_AdminLTELayout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Article)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AuthorId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date_Published)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BannerImage)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Featured)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CommentsEnabled)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Enabaled)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Views)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Article)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AuthorId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date_Published)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BannerImage)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Featured)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CommentsEnabled)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Enabaled)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Views)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.BlogId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.BlogId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.BlogId })
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,49 @@
+﻿@model IEnumerable<WeFix.Domain.Entities.DepartmentManager>
+@{
+    var db = new WeFix.Domain.Context.EFDbContext();
+}
+<p>
+    <a href="#" onclick="CreateDepartmentManager()" class="btn btn-flat btn-primary">Create New</a>
+</p>
+<hr/>
+<div class="row">
+    @foreach (var item in Model)
+    {
+        var dept = db.Departments.Find(item.DepartmentId);
+        var category = (from x in db.Categories where x.CategoryId == dept.CategoryId select x).FirstOrDefault();
+        var User = db.Users.Find(item.UserId);
+        <div class="col-sm-6" style="border: 3px solid #E6E6FA; border-radius:5px;">
+            <!-- Post -->
+            <div class="post">
+                <div class="user-block">                  
+                    <img class="img-circle img-bordered-sm" src="~/Content/img/@category.Image" alt="user image">                          
+                    <span class="username">
+                        <a href="#">@User.FirstName @User.LastName</a>
+                       
+                            <a onclick="ConfirmManagerDelete(@item.DepartmentManagerId)" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                                          
+                    </span>
+                    <span class="description">Department - @item.Department.Name</span>
+                    <span class="description">Position - @item.Position</span>
+                </div>
+                <!-- /.user-block -->
+                <ul class="list-inline">
+                    <li><a href="#" onclick="location.href='@Url.Action("Edit","DepartmentManagers",new { id = item.DepartmentManagerId })'" class="link-black text-sm"><i class="fa fa-edit margin-r-5"></i> Edit</a></li>
+                    <li>
+                        <a href="#" onclick="location.href='@Url.Action("Details","DepartmentManagers",new { id = item.DepartmentManagerId })'" class="link-black text-sm"><i class="fa fa-info margin-r-5"></i> Details</a>
+                    </li>            
+                </ul>
+            </div>
+            <!-- /.post -->
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    function ConfirmManagerDelete(id) {
+        var r = confirm("Are you sure you want to delete this Manager?")
+        if (r == true) {
+            location.href = '/DepartmentManagers/DeleteFromDash/' + id;
+        }
+    }
+</script>
+ 

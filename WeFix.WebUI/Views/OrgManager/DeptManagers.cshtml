@@ -1,0 +1,82 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "DeptManagers";
+    var db = new WeFix.Domain.Context.EFDbContext();
+    var userId = HttpContext.Current.User.Identity.GetUserId();
+    IEnumerable<WeFix.Domain.Entities.Department> AllDept = null;
+    IEnumerable<WeFix.Domain.Entities.DepartmentManager> orgsManagers = null;
+    IEnumerable<WeFix.Domain.Entities.Fault> allFaults = null;
+    List<WeFix.Domain.Entities.Fault> orgsFaults = null;
+    if (userId != null)
+    {
+        WeFix.Domain.Entities.Organisation org;
+        int orgId;
+        WeFix.Domain.Entities.OrganisationManager orgMan = (from x in db.OrganisationManagers where x.UserId == userId select x).FirstOrDefault();
+        if(orgMan != null)
+        {
+            org = (from x in db.Organisations where x.OrganisationId == orgMan.OrganisationId select x).FirstOrDefault();
+            orgId = org.OrganisationId;
+            orgsManagers = (from x in db.DepartmentManagers select x).ToList();
+            AllDept = (from x in db.Departments where x.OrganisationId == orgId select x).ToList();
+            allFaults = (from x in db.Faults select x).ToList();
+            foreach(var dept in AllDept)
+            {
+                foreach(var fault in allFaults)
+                {
+                    if(dept.CategoryId == fault.CategoryId)
+                    {
+                        orgsFaults.Add(fault);
+                    }
+                }
+            }
+        }
+
+    }
+
+
+
+}
+<div class="well">
+    <h4>Dashboard</h4>
+    <p>Some text..</p>
+</div>
+<div class="row">
+    <div class="col-sm-4">
+        <div class="well">
+            @if (AllDept == null)
+            {
+                <p>You do not have any Departments yet. <a href="#" onclick="location.href='@Url.Action("Create","Departments",null)'">Add a Department</a></p>
+            }
+            else
+            {
+                Html.Partial("Index", AllDept);
+            }
+            
+         </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="well">
+            @if (orgsManagers == null)
+            {
+                <p>You do not have any Department Managers yet. <a href="#" onclick="location.href='@Url.Action("Create","DepartmentManagers",null)'">Add a Department Manager</a></p>
+            }
+            else
+            {
+                Html.Partial("Index", orgsManagers);
+            }
+            
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="well">
+            @if(orgsFaults == null)
+            {
+                <p>You have no faults outstanding</p>
+            }
+            else
+            {
+                Html.Partial("../Faults/Index", orgsFaults);
+            }
+        </div>
+    </div>
+</div>

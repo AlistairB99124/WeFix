@@ -1,0 +1,91 @@
+﻿@model WeFix.Domain.Entities.Blog
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_AdminLTELayout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Blog</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Article)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Article)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AuthorId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AuthorId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Date_Published)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date_Published)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BannerImage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BannerImage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Featured)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Featured)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CommentsEnabled)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CommentsEnabled)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Enabaled)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Enabaled)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Views)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Views)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.BlogId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

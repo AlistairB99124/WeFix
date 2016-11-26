@@ -1,0 +1,244 @@
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\roslyn\csc.exe
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.CodeAnalysis.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.CSharp.Core.targets
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\roslyn\System.Collections.Immutable.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\roslyn\System.Reflection.Metadata.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\roslyn\vbc.exe
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\roslyn\VBCSCompiler.exe
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\roslyn\VBCSCompiler.exe.config
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\WeFix.WebUI.dll.config
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\WeFix.WebUI.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\WeFix.WebUI.pdb
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Antlr3.Runtime.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\EntityFramework.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\EntityFramework.SqlServer.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.Core.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.EntityFramework.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.Owin.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Host.SystemWeb.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Cookies.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Facebook.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Google.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.MicrosoftAccount.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.OAuth.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Twitter.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Web.Infrastructure.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Newtonsoft.Json.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Owin.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\RouteJs.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\RouteJs.Mvc5.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.Helpers.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.Mvc.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.Optimization.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.Razor.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.WebPages.Deployment.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.WebPages.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.WebPages.Razor.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\WebActivatorEx.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\WebGrease.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.Helpers.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.Mvc.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.Optimization.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.Razor.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.WebPages.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.WebPages.Deployment.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\System.Web.WebPages.Razor.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Antlr3.Runtime.pdb
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Newtonsoft.Json.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\EntityFramework.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\EntityFramework.SqlServer.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.Core.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.Owin.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.EntityFramework.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Host.SystemWeb.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Facebook.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Cookies.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.OAuth.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Google.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Twitter.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\obj\Debug\WeFix.WebUI.csprojResolveAssemblyReference.cache
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\obj\Debug\WeFix.WebUI.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\obj\Debug\WeFix.WebUI.pdb
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\WeFix.Domain.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.WebUI\bin\WeFix.Domain.pdb
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\roslyn\csc.exe
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\roslyn\vbc.exe
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\roslyn\VBCSCompiler.exe
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\WeFix.WebUI.dll.config
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\WeFix.WebUI.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\WeFix.WebUI.pdb
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Antlr3.Runtime.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\EntityFramework.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\EntityFramework.SqlServer.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.Core.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.Owin.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Host.SystemWeb.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Cookies.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Facebook.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Google.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.MicrosoftAccount.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.OAuth.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Twitter.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Newtonsoft.Json.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Owin.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\RouteJs.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\RouteJs.Mvc5.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.Helpers.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.Mvc.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.Optimization.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.Razor.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.WebPages.Deployment.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.WebPages.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.WebPages.Razor.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\WebActivatorEx.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\WebGrease.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\WeFix.Domain.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\WeFix.Domain.pdb
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.Helpers.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.Mvc.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.Optimization.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.Razor.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.WebPages.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.WebPages.Deployment.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\System.Web.WebPages.Razor.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Antlr3.Runtime.pdb
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Newtonsoft.Json.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\EntityFramework.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\EntityFramework.SqlServer.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.Core.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.Owin.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Host.SystemWeb.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Facebook.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Cookies.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.OAuth.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Google.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Twitter.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\obj\Debug\WeFix.WebUI.csprojResolveAssemblyReference.cache
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\obj\Debug\WeFix.WebUI.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\obj\Debug\WeFix.WebUI.pdb
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\GoogleMaps.LocationServices.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.SignalR.Core.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.SignalR.Core.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.SignalR.SystemWeb.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Geolocation.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Geolocation.pdb
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Shorthand.Geodesy.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Shorthand.Geodesy.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.WebUI\bin\Geocoding.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\roslyn\csc.exe
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\roslyn\vbc.exe
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\roslyn\VBCSCompiler.exe
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\WeFix.WebUI.dll.config
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\WeFix.WebUI.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\WeFix.WebUI.pdb
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Antlr3.Runtime.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\EntityFramework.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\EntityFramework.SqlServer.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Geocoding.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Geolocation.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\GoogleMaps.LocationServices.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.Core.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.Owin.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.SignalR.Core.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Host.SystemWeb.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Cookies.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Facebook.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Google.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.MicrosoftAccount.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.OAuth.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Twitter.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Newtonsoft.Json.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Owin.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\RouteJs.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\RouteJs.Mvc5.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Shorthand.Geodesy.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.Helpers.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.Mvc.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.Optimization.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.Razor.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.WebPages.Deployment.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.WebPages.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.WebPages.Razor.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\WebActivatorEx.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\WebGrease.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\WeFix.Domain.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\WeFix.Domain.pdb
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Geolocation.pdb
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.SignalR.Core.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.SignalR.SystemWeb.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Shorthand.Geodesy.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.Helpers.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.Mvc.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.Optimization.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.Razor.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.WebPages.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.WebPages.Deployment.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\System.Web.WebPages.Razor.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Antlr3.Runtime.pdb
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Newtonsoft.Json.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\EntityFramework.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\EntityFramework.SqlServer.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.Core.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.Owin.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Host.SystemWeb.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Facebook.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Cookies.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.OAuth.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Google.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.Twitter.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\obj\Debug\WeFix.WebUI.csprojResolveAssemblyReference.cache
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\obj\Debug\WeFix.WebUI.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\obj\Debug\WeFix.WebUI.pdb
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\WeFix.Helpers.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.WebUI\bin\WeFix.Helpers.pdb

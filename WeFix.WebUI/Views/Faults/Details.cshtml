@@ -1,0 +1,75 @@
+﻿@model WeFix.Domain.Entities.Fault
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_AdminLTELayout.cshtml";
+}
+@using WeFix.Logic
+@using WeFix.Domain.Context
+@using GoogleMaps.LocationServices
+@{
+    var helper = new Helpers();
+    var db = new EFDbContext();
+    var gls = new GoogleLocationService();
+}
+<div style="border: 3px solid #E6E6FA; border-radius:5px; z-index:5;position:relative;height:auto;background-color:#fff; margin-left:25px;margin-right:25px;margin-top:150px;">
+    <!-- Post -->
+    <div class="post">
+        <div class="user-block">
+            @if (Model.ImageURL != null)
+            {
+                <img class="img-circle img-bordered-sm" src="@Model.ImageURL.Replace("~","../..")" alt="user image">
+            }
+            <span class="username">
+                <a href="#">@Model.FaultId</a>
+                <a href="#" onclick="location.href='@Url.Action("DeleteFromDash", "Departments",new { id=Model.FaultId})'" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+            </span>
+            <span class="description"><strong>Date</strong> @Model.DateCreated</span>
+            <span class="description"><strong>Category</strong> @Model.Category.Name</span>
+            <span class="description"><strong>Sub-Category</strong> @Model.SubCategory.Name</span>
+            <span class="description"><strong>Severity</strong> @Model.SeverityId</span>
+        </div>
+        <!-- /.user-block -->
+        <p>
+            @{ var address = helper.GetAddressFromLatLong(Model.Latitude, Model.Longitude);}
+            <strong>Address:</strong> @address
+        </p>
+        <p>
+            <strong>Description:</strong> @Model.Description
+        </p>
+        <p>
+            <strong>LatLng:</strong> @(Model.Latitude + "||" + Model.Longitude)
+        </p>
+       @if (Model.ManagerId != null)
+       {
+           var departmentManager = db.DepartmentManagers.Find(Model.ManagerId);
+           var user = db.Users.Find(departmentManager.UserId);
+        <p>
+            @Html.ActionLink(user.LastName + ", " + user.FirstName, "UnAssignManagerIfInDetails", "Organisations", new { id = Model.FaultId }, new { @title = "Unassign Manager", @class = "btn btn-flat btn-success" })
+        </p>
+       }
+       else
+       {
+        <p>
+            @Html.ActionLink("Assign", "AssignManagerIfInDetails", "Organisations", new { id = Model.FaultId }, new { @class = "btn btn-flat btn-primary", @title = "Assign Manager" })
+        </p>
+       }
+    @if (Model.Resolved)
+    {
+        <p>
+            @Html.ActionLink("Mark Unresolved", "MarkUnresolvedIfInDetails", "Faults", new { id = Model.FaultId }, new { @class = "btn btn-falt btn-danger" })
+        </p>
+    }
+    else
+    {
+        <p>
+            @Html.ActionLink("Mark Resolved", "MarkResolvedIfInDetails", "Faults", new { id = Model.FaultId }, new { @class = "btn btn-success" })
+        </p>
+    }
+    <ul class="list-inline">
+        <li>
+            <a href="#" onclick="location.href='@Url.Action("Management","Organisations",new { id = Model.FaultId })'" class="link-black text-sm"><i class="fa fa-arrow-circle-left margin-r-5"></i> Back Management</a>
+        </li>
+    </ul>
+    </div>
+    <!-- /.post -->
+</div>

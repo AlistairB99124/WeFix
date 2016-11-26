@@ -1,0 +1,80 @@
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\obj\Debug\WeFix.Domain.csprojResolveAssemblyReference.cache
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\WeFix.Domain.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\WeFix.Domain.pdb
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\EntityFramework.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\EntityFramework.SqlServer.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\Microsoft.Web.Infrastructure.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\System.Web.Helpers.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\System.Web.Mvc.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\System.Web.Razor.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.Deployment.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.Razor.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\EntityFramework.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\EntityFramework.SqlServer.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\System.Web.Helpers.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\System.Web.Mvc.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\System.Web.Razor.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.Deployment.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.Razor.xml
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\obj\Debug\WeFix.Domain.dll
+c:\users\alistair\documents\visual studio 2015\Projects\WeFix\WeFix.Domain\obj\Debug\WeFix.Domain.pdb
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\WeFix.Domain.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\WeFix.Domain.pdb
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\EntityFramework.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\Microsoft.Web.Infrastructure.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\System.Web.Helpers.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\System.Web.Mvc.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\System.Web.Razor.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.Deployment.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.Razor.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\EntityFramework.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\System.Web.Helpers.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\System.Web.Mvc.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\System.Web.Razor.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.Deployment.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.Razor.xml
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\obj\Debug\WeFix.Domain.csprojResolveAssemblyReference.cache
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\obj\Debug\WeFix.Domain.dll
+C:\Users\Alistair\Documents\Visual Studio 2015\Projects\WeFix\WeFix\WeFix.Domain\obj\Debug\WeFix.Domain.pdb
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\WeFix.Domain.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\WeFix.Domain.pdb
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\EntityFramework.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\Microsoft.Web.Infrastructure.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\System.Web.Helpers.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\System.Web.Mvc.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\System.Web.Razor.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.Deployment.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.Razor.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\EntityFramework.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\System.Web.Helpers.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\System.Web.Mvc.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\System.Web.Razor.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.Deployment.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\bin\Debug\System.Web.WebPages.Razor.xml
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\obj\Debug\WeFix.Domain.csprojResolveAssemblyReference.cache
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\obj\Debug\WeFix.Domain.dll
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\obj\Debug\WeFix.Domain.pdb
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\obj\Debug\WeFix.Domain.Migrations.InitialCreate.resources
+C:\Users\Alistair\Documents\WeFix\Final\WeFix\WeFix.Domain\obj\Debug\WeFix.Domain.csproj.GenerateResource.Cache

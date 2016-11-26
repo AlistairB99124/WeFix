@@ -1,0 +1,90 @@
+﻿@model WeFix.Domain.Entities.Fault
+
+@{
+    ViewBag.Title = "DetailsForPublic";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using WeFix.Logic
+@using WeFix.Domain.Context
+@using GoogleMaps.LocationServices
+@{
+    var helper = new Helpers();
+    var db = new EFDbContext();
+    var gls = new GoogleLocationService();
+}
+<div style="border: 3px solid #E6E6FA; border-radius:5px; z-index:5;position:relative;height:auto;background-color:#fff; margin-left:25px;margin-right:25px;margin-top:150px;">
+    <!-- Post -->
+    <div class="post">
+        <div class="user-block">
+            @if (Model.ImageURL != null)
+            {
+                <img class="img-circle img-bordered-sm" src="@Model.ImageURL.Replace("~","../..")" alt="user image">
+            }
+            <span class="username">
+                <a href="#">@Model.FaultId</a>
+                    <a href="#" onclick="checkDelete()" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                
+                
+            </span>
+            <span class="description"><strong>Date</strong> @Model.DateCreated</span>
+            <span class="description"><strong>Category</strong> @Model.Category.Name</span>
+            <span class="description"><strong>Sub-Category</strong> @Model.SubCategory.Name</span>
+            <span class="description"><strong>Severity</strong> @Model.SeverityId</span>
+        </div>
+        <!-- /.user-block -->
+        <p>
+            @{ var address = helper.GetAddressFromLatLong(Model.Latitude, Model.Longitude);}
+            <strong>Address:</strong> @address
+        </p>
+        <p>
+            <strong>Description:</strong> @Model.Description
+        </p>
+        <ul class="list-inline">
+            <li>
+                <a href="#" onclick="location.href='@Url.Action("Edit","Faults",new { id = Model.FaultId })'" class="link-black text-sm"><i class="fa fa-edit margin-r-5"></i> Edit</a>
+               
+            </li>
+            <li class="pull-right">
+                @if (Model.ManagerId != null)
+                {
+                    var departmentManager = db.DepartmentManagers.Find(Model.ManagerId);
+                    var user = db.Users.Find(departmentManager.UserId);
+                    <div>
+                        Assigned to @(user.LastName + ", " + user.FirstName)
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        Unassigned
+                    </div>
+                }
+            </li>
+            <li class="pull-right">
+                @if (Model.Resolved)
+                {
+                    <div>
+                        Resolved
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        Unresolved
+                    </div>
+                }
+            </li>
+        </ul>
+    </div>
+    <!-- /.post -->
+</div>
+
+<script type="text/javascript">
+    function checkdelete() {
+        var r = confirm("Are you sure you want to delete this fault report?")
+        if (r == true) {
+            location.href='@Url.Action("","",new { id=Model.FaultId })';
+        }
+    }
+
+</script>

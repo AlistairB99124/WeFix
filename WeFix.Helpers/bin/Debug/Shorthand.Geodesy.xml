@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Shorthand.Geodesy</name>
+    </assembly>
+    <members>
+        <member name="T:Shorthand.Geodesy.Extensions.Double">
+            <summary>
+            Extensions methods for System.Double.
+            </summary>
+        </member>
+        <member name="M:Shorthand.Geodesy.Extensions.Double.ToDegrees(System.Double)">
+            <summary>
+            Converts from radians to degrees.
+            </summary>
+        </member>
+        <member name="M:Shorthand.Geodesy.Extensions.Double.ToRadians(System.Double)">
+            <summary>
+            Converts from degrees to radians.
+            </summary>
+        </member>
+        <member name="T:Shorthand.Geodesy.GaussKruger">
+            <summary>
+            Implementation of the Gauss-Krüger formula for converting between geodetic coordinates and grid coordinates.
+            </summary>
+        </member>
+        <member name="M:Shorthand.Geodesy.GaussKruger.GeodeticToGrid(Shorthand.Geodesy.GeodeticCoordinate,Shorthand.Geodesy.Projections.Projection)">
+            <summary>
+            Converts a geodetic coordinate to a grid coordinate.
+            </summary>
+            <param name="coordinate">The geodetic coordinate to convert.</param>
+            <param name="projection">The projection to use in the conversion.</param>
+            <returns>The grid representation of the initial coordinate.</returns>
+        </member>
+        <member name="M:Shorthand.Geodesy.GaussKruger.GridToGeodetic(Shorthand.Geodesy.GridCoordinate)">
+            <summary>
+            Converts a grid coordinate to a geodetic coordinate.
+            </summary>
+            <param name="coordinate">The grid coordinate to convert.</param>
+            <returns>The geodetic representation of the initial coordinate.</returns>
+        </member>
+        <member name="T:Shorthand.Geodesy.GeodeticCoordinate">
+            <summary>
+            Represents a geodetic coordinate
+            </summary>
+        </member>
+        <member name="T:Shorthand.Geodesy.GridCoordinate">
+            <summary>
+            Represents a coordinate projected on a grid
+            </summary>
+        </member>
+        <member name="T:Shorthand.Geodesy.DistanceCalculator">
+            <summary>
+            Helper methods to calculate distances between coordinates.
+            </summary>
+        </member>
+        <member name="M:Shorthand.Geodesy.DistanceCalculator.Haversine(Shorthand.Geodesy.GeodeticCoordinate,Shorthand.Geodesy.GeodeticCoordinate)">
+            <summary>
+            Calculates the distance between two geodetic coordinates using the Haversine formula.
+            </summary>
+            <param name="coordinate1">The first coordinate.</param>
+            <param name="coordinate2">The second coordinate.</param>
+            <returns>The distance between the coordinates in kilometers.</returns>
+        </member>
+        <member name="M:Shorthand.Geodesy.DistanceCalculator.Spherical(Shorthand.Geodesy.GeodeticCoordinate,Shorthand.Geodesy.GeodeticCoordinate)">
+            <summary>
+            Calculates the distance between two geodetic coordinates using the Spherical law of cosines.
+            </summary>
+            <param name="coordinate1">The first coordinate.</param>
+            <param name="coordinate2">The second coordinate.</param>
+            <returns>The distance between the coordinates in kilometers.</returns>
+        </member>
+        <member name="M:Shorthand.Geodesy.DistanceCalculator.CoordFromDistance(Shorthand.Geodesy.GeodeticCoordinate,System.Double,System.Double)">
+            <summary>
+            Calculates a new coordinate from a bearing and distance from a specified coordinate.
+            </summary>
+            <param name="start">The initial coordinate.</param>
+            <param name="bearing">The bearing from the initial coordinate in degrees.</param>
+            <param name="distance">The distance from the initial coordinate in kilometers.</param>
+            <returns>A new geodetic coordinate representing the new point.</returns>
+        </member>
+    </members>
+</doc>

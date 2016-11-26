@@ -1,0 +1,104 @@
+﻿@model WeFix.Domain.Entities.Blog
+    @using WeFix.Domain.Context
+@using Microsoft.AspNet.Identity
+@using WeFix.Domain.Entities
+@{
+    ViewBag.Title = "Article";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{ 
+    var db = new EFDbContext();
+}
+<aside class="blog-article" style="padding-right:25px;padding-left:25px;">   
+    <div class="row">
+        <div class="col-sm-4">
+            <button style="margin:14px" class="btn btn-github btn-flat" onclick="location.href='@Url.Action("Index","Manage")'"><span class="fa fa-arrow-circle-left"></span>  <span class="hidden-xs">BACK</span></button>
+         </div>
+        <div class="col-sm-4">
+            <h2 style="text-align:center;">
+                We<strong>Fix</strong> Blog
+            </h2>
+        </div>
+        <div class="col-sm-4">
+
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="thumbnail">
+                <img src="@Model.BannerImage.Replace("~","../..")" alt="">
+                <div class="caption">
+                    <h3 class="text-center">@Model.Title</h3>
+                    <div class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            @{
+                                var author = db.Users.Find(Model.AuthorId);
+
+                            }
+                            <img class="media-object" src="@author.UserPhotoUrl.Replace("~", "../..")" alt="@author.FirstName" width="35" height="35">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h5 class="media-heading"><strong>Author</strong> - @(author.FirstName + " " + author.LastName)</h5>
+                        <p><small><strong>Date</strong> - @Model.Date_Published</small></p>
+                    </div>
+                        </div>
+                    </div>                    
+                    <p>
+                       @Html.Raw(Model.Article)
+                    </p>
+                </div>
+            </div>
+        </div>
+    <hr/>
+    <div class="row">
+        <div class="col-sm-12">
+            @using (Html.BeginForm("MakeComment", "Blogs", FormMethod.Post, new { @id = "commentForm" }))
+            {
+                <div class="form-group has-feedback">
+                    <div class="input-group">
+                        <div type="submit" id="submitComment" class="input-group-btn">
+                            <button type="submit" class="btn btn-primary btn-block btn-flat">
+                                Comment
+                            </button>
+                        </div>
+                        <input class="form-control input-sm" type="text" name="CommentText" placeholder="Type a comment" />
+                    </div>
+                </div>
+                <input class="hidden" value="@Model.BlogId" name="blogId" />
+                <input type="hidden" value="@HttpContext.Current.User.Identity.GetUserId()" name="userId" />
+            }
+            @{ var comments = (from x in db.Blog_Comments where x.BlogId == Model.BlogId select x).ToList(); }
+            
+                @if (comments.Count != 0)
+                {
+                    <ul id="commentList" class="media-list">
+                    @foreach (var comment in comments)
+                        {
+                        <li class="media">
+                            <div class="media-left">
+                                <a href="#">
+                                    @{
+                                        var commenter = db.Users.Find(comment.Commenter);
+
+                                    }
+                                    <img class="media-object" src="@commenter.UserPhotoUrl.Replace("~", "../..")" alt="@commenter.FirstName" width="35" height="35">
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <h6 class="media-heading">@(commenter.FirstName + " " + commenter.LastName)</h6>
+                                <p><small>@comment.TimeStamp</small></p>
+                                @comment.Comment
+                            </div>
+                        </li>
+                        }
+                    </ul>
+
+                                       
+                }
+           
+        </div>      
+    </div>
+</aside>

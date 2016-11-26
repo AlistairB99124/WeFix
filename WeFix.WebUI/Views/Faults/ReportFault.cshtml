@@ -1,0 +1,961 @@
+﻿@model WeFix.Domain.Entities.Fault
+@{
+    ViewBag.Title = "ReportFault";
+    var db = new WeFix.Domain.Context.EFDbContext();
+    var cates = (from x in db.Categories select x).ToList();
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (!Request.Browser.IsMobileDevice)
+{
+    @section AddToHead{
+        <link href="~/Content/css/style.css" rel="stylesheet" type="text/css" />
+        <style type="text/css">
+            html, body {
+                height: 100%;
+            }
+
+            .fullDiv {
+                height: 100%;
+            }
+
+            .stretch {
+                height: 100%;
+                width: 100%;
+            }
+
+            .content-wrapper-hack {
+                min-height: 100%;
+                width: 100%;
+                position: absolute;
+            }
+
+            .content-hack {
+                height: 100%;
+                position: absolute;
+            }
+
+            body {
+                line-height: 0px;
+            }
+
+            .panel-footer {
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+
+            .hide-chat {
+                display: none;
+            }
+        </style>
+    }
+
+    <div style="padding-bottom:44px;padding-right:0;height:100%;color:#fff;">
+        @using (Html.BeginForm("ReportFault", "Faults", FormMethod.Post, new { @style = "height:100%;" }))
+                {
+            <div class="text-center" data-stellar-background-ratio="0.5" style="width:100%;height:100%;">
+                <div class="fullDiv">
+                    <div style="display:inline-block; position:relative;font-size:17px;z-index:1000;">
+                        <ul id="tabs" class="nav navbar-inverse nav-tabs" style="z-index:100;color:#FCC72C;" data-tabs="tabs">
+                            <li role="presentation" class="active">
+                                <a href="#Location" id="LocationTab" data-toggle="tab">
+                                    <span style="vertical-align:middle;" class="fa fa-map"></span>
+                                    <span class="hidden-xs" style="vertical-align:middle;">Location</span>
+                                    <span style="vertical-align:middle;" class="fa fa-chevron-right"></span>
+                                </a>
+                            </li>
+                            <li role="presentation">
+                                <a href="#Category" id="CategoryTab">
+                                    <span style="vertical-align:middle;" class="fa fa- fa-tag"></span>
+                                    <span class="hidden-xs" style="vertical-align:middle;">Category</span>
+                                    <span style="vertical-align:middle;" class="fa fa-chevron-right"></span>
+                                </a>
+                            </li>
+                            <li role="presentation">
+                                <a href="#Severity" id="SeverityTab">
+                                    <span class="fa fa-line-chart" style="vertical-align:middle;"></span>
+                                    <span class="hidden-xs" style="vertical-align:middle;">Severity</span>
+                                    <span style="vertical-align:middle;" class="fa fa-chevron-right"></span>
+                                </a>
+                            </li>
+                            <li role="presentation">
+                                <a href="#Image" id="ImageTab">
+                                    <span style="vertical-align:middle;" class="fa fa-camera"></span>
+                                    <span class="hidden-xs" style="vertical-align:middle;">Image</span>
+                                    <span style="vertical-align:middle;" class="fa fa-chevron-right"></span>
+                                </a>
+                            </li>
+                            <li role="presentation">
+                                <a href="#Description" id="DescriptionTab">
+                                    <span style="vertical-align:middle;" class="fa fa-pencil-square-o"></span>
+                                    <span class="hidden-xs" style="vertical-align:middle;">Description</span>
+                                    <span style="vertical-align:middle;" class="fa fa-chevron-right"></span>
+                                </a>
+                            </li>
+                            <li role="presentation">
+                                <a href="#Summary" id="SummaryTab">
+                                    <span class="fa fa-list"></span>
+                                    <span style="vertical-align:middle;" class="fa fa-check"></span>
+                                    <span class="hidden-xs" style="vertical-align:middle;">Confirm</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="my-tab-content" style="position:relative;z-index:1000;" class="tab-content fullDiv report-content">
+                        <div class="tab-pane fade in active" id="Location" style="height:100%;position:relative;">
+                            <div class="panel" style="height:100%;position:relative;">
+                                <div class="panel-heading">
+                                    <h4>Position</h4>
+                                </div>
+                                <div class="panel-body" style="height:85%;position:relative;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" id="userId" value="@ViewBag.UserId" />
+                                    <div id="map1" class="stretch"></div>
+                                    <input name="latitude" id="latitude" class="hidden" />
+                                    <input name="longitude" id="longitude" class="hidden" />
+                                </div>
+                                <div class="panel-footer" style="position:absolute;bottom:0;width:100%;padding:0;height:40px">
+                                    <table style="width:100%; height:100%;">
+                                        <tr style="width:100%;height:100%;">
+                                            <td style="width:33.33%;height:100%;">
+                                                <input type="button" value="------" readonly="readonly" class="btn-block btn-guardian stretch" />
+                                            </td>
+                                            <td style="width:33.33%;height:100%;">
+                                                <input type="button" value="Cancel" onclick="location.reload()" class="btn-block btn-guardian stretch" />
+                                            </td>
+                                            <td style="width:33.34%; height:100%;">
+                                                <input type="button" onclick="setSummary('location');changeLocation();" class="btn-block btn-guardian stretch" value="Continue" />
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="tab-pane fade" id="Category" style="height:100%;position:relative;">
+                            @{
+                                var categories = (from x in db.Categories orderby x.Count descending select x).ToList();
+                            }
+                            <div class="panel" style="height:100%;position:relative;">
+                                <div class="panel-heading">
+                                    <h4>Select the Category of the Fault</h4>
+                                </div>
+                                <input type="hidden" name="categoryId" id="categoryId" />
+                                <div class="panel-body" style="position:relative; height:100%;width:100%;">
+
+                                    <div style="width:100%;height:466px;position:relative;" class="center-block">
+                                        @foreach (var cat in categories.Take(9))
+                                        {
+                                            <div class="switch" style="float:left;">
+                                                <input id="@("cmn-toggle-" + cat.CategoryId)" class="cmn-toggle cmn-toggle-yes-no" value="@cat.CategoryId" type="radio" name="category" />
+                                                <label id="@("Label" + cat.CategoryId)" for="@("cmn-toggle-" + cat.CategoryId)">
+                                                    <img class="imgFront" src="~/Content/img/@cat.Image" height="125" width="125" />
+                                                    <img class="imgBack" src="~/Content/img/@cat.Image.Replace(".png", "Label.png")" width="125" height="125" />
+                                                </label>
+                                            </div>
+                                        }
+                                        <div class="col-xs-12" style="position:absolute;bottom:15px;width:100%;">
+                                            <select class="selectpicker" data-style="btn-guardian" style="width:100%;" onchange="CreateSelect(this);SetCatSummary(this);setCategory(this);">
+                                                <option selected="selected">Other</option>
+                                                @for (int i = 9; i < categories.Count; i++)
+                                                {
+                                                    <option value="@categories[i].CategoryId">@categories[i].Name</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="panel-footer" style="position:absolute;bottom:0;width:100%;padding:0;height:40px">
+                                    <table style="width:100%; height:100%;">
+                                        <tr style="width:100%;height:100%;">
+                                            <td style="width:33.33%;height:100%;">
+                                                <input type="button" value="Back" onclick="BackToLocation()" class="btn-block btn-guardian stretch" />
+                                            </td>
+                                            <td style="width:33.33%;height:100%;">
+                                                <input type="button" value="Cancel" onclick="location.reload()" class="btn-block btn-guardian stretch" />
+                                            </td>
+                                            <td style="width:33.34%; height:100%;">
+                                                <input type="button" onclick="checkCategory()" class="btn-block btn-guardian stretch" value="Continue" />
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="Severity" style="height:100%;position:relative;">
+                            <div class="panel" style="height:100%">
+                                <div class="panel-heading" style="text-align:center;">
+                                    <h4>How Bad Is The Fault?</h4>
+                                </div>
+                                <div class="panel-body">
+                                    <img class="center-block" id="imgRange" width="200" height="200" />
+
+                                    <div id="slider">
+                                        <hr />
+                                        <input type="range" list="settings" name="SeveritySlider" id="rangeinput" min="1" max="10" step="1" value="5" class="bar" onchange="rangevalue.value = value;changeImg();" />
+                                        <hr />
+                                        <span class="highlight"></span>
+                                        <output id="rangevalue" style="text-align:center; font-size:17px;font-weight:bold;" class="btn btn-guardian">5</output>
+                                        <hr />
+                                    </div>
+                                </div>
+                                <div class="panel-footer" style="position:absolute;bottom:0;width:100%;padding:0;height:40px">
+                                    <table style="width:100%; height:100%;">
+                                        <tr style="width:100%;height:100%;">
+                                            <td style="width:33.33%;height:100%;">
+                                                <input type="button" value="Back" onclick="BackToCategory()" class="btn-block btn-guardian stretch" />
+                                            </td>
+                                            <td style="width:33.33%;height:100%;">
+                                                <input type="button" value="Cancel" onclick="location.reload()" class="btn-block btn-guardian stretch" />
+                                            </td>
+                                            <td style="width:33.34%; height:100%;">
+                                                <input type="button" onclick="changeSeverity();" class="btn-block btn-guardian stretch" value="Continue" />
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade stretch" id="Image">
+                            <div class="center-block stretch" style="position:relative;">
+                                <div class="panel stretch" style="position:relative;">
+                                    <div class="panel-heading" style="padding:5px;">
+                                        <h4>Upload Image</h4>
+                                    </div>
+                                    <div class="panel-body" style="height:100%;width:100%;position:relative;">
+                                        <div id="WebCam" class="hidden">
+                                            <div style="position:absolute;width:100%; height:100%; padding:5px; border:1px black solid;border-radius:10px;">
+                                                <div id="my_camera" class="center-block"></div>
+                                                <img class="hidden" id="imageURL" src="" style="width:100%;height:100%; overflow:hidden;" alt="" />
+                                                <button type="button" onclick="take_snapshot();" class="btn btn-guardian center-block" style="width:45px;border-radius:45px;margin-top:20px;"><span class="fa fa-camera"></span></button>
+                                            </div>
+                                            <!-- A button for taking snaps -->
+                                            <input type="hidden" id="base64Label" name="base64Label" />
+                                            <p id="myResult"></p>
+                                        </div>
+                                        <div id="fileUpload" class="hidden">
+                                            <div style="width:100%;padding:15px;height:400px">
+                                                <img id="fileUploadImage" style="width:100%;height:100%;border-radius:15px" />
+                                            </div>
+                                            <div style="width:100%;position:absolute;height:30px;bottom:0;margin:0 0 125px -15px">
+                                                <label class="btn btn-guardian btn-file center-block" style="width:45px;border-radius:45px;">
+                                                    <span class="fa fa-camera" style="vertical-align:middle;"></span><input type="file" id="fileInput">
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <!-- First, include the Webcam.js JavaScript Library -->
+                                        <script type="text/javascript" src="~/Content/js/plugins/WebCam/webcam.js"></script>
+                                        <!-- Configure a few settings and attach camera -->
+                                        <script language="JavaScript">
+                                                var fileUpload = document.getElementById('fileUpload');
+                                                var my_camera = document.getElementById('my_camera');
+                                                var webCam = document.getElementById('WebCam');
+                                                var hasFlash = false;
+                                                try {
+                                                    var fo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+                                                    if (fo) {
+                                                        hasFlash = true;
+                                                    }
+                                                } catch (e) {
+                                                    if (navigator.mimeTypes
+                                                          && navigator.mimeTypes['application/x-shockwave-flash'] != undefined
+                                                          && navigator.mimeTypes['application/x-shockwave-flash'].enabledPlugin) {
+                                                        hasFlash = true;
+                                                    }
+                                                }
+                                                if (hasFlash) {
+                                                    webCam.setAttribute('class','');
+                                                    Webcam.set({
+                                                        // live preview size
+                                                        width: 320,
+                                                        height: 240,
+
+                                                        // device capture size
+                                                        dest_width: 640,
+                                                        dest_height: 480,
+
+                                                        // final cropped size
+                                                        crop_width: 480,
+                                                        crop_height: 480,
+
+                                                        // format and quality
+                                                        image_format: 'jpeg',
+                                                        jpeg_quality: 90,
+
+                                                        // flip horizontal (mirror mode)
+                                                        flip_horiz: true
+                                                    });
+                                                    Webcam.attach('#my_camera');
+                                                } else {
+                                                    fileUpload.setAttribute('class', '');
+                                                    webCam.setAttribute('class', 'hidden');
+                                                }
+                                        </script>
+                                    </div>
+                                    <div class="panel-footer" style="position:absolute;bottom:0;width:100%;padding:0;height:40px">
+                                        <table style="width:100%; height:100%;">
+                                            <tr style="width:100%;height:100%;">
+                                                <td style="width:33.34%; height:100%;">
+                                                    <input type="button" value="Back" onclick="BackToSeverity()" class="btn-block btn-guardian stretch" />
+                                                </td>
+                                                <td style="width:33.34%; height:100%;">
+                                                    <input type="button" value="Cancel" onclick="location.reload()" class="btn-block btn-guardian stretch" />
+
+                                                </td>
+                                                <td style="width:33.34%; height:100%;">
+                                                    <input type="button" class="btn-block btn-guardian stretch" value="Continue" onclick="changeImage()" />
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="Description" style="position:relative; height:100%;" class="tab-pane fade">
+                            <div class="panel stretch">
+                                <div class="panel-heading">
+                                    <h4>Description</h4>
+                                </div>
+                                <div class="panel-body stretch">
+                                    <p>
+                                        <div id="myDiv"></div>
+                                        <input type="hidden" id="subCatId" value="0" name="subCatId" />
+                                    </p>
+                                    <hr />
+                                    @Html.TextAreaFor(model => model.Description, new { @id = "descText", @class = "form-control", @style = "height:364px" })
+                                </div>
+                                <div class="panel-footer" style="position:absolute;bottom:0; width:100%;padding:0;height:40px">
+                                    <table style="width:100%; height:100%;">
+                                        <tr style="width:100%;height:100%;">
+                                            <td style="width:33.34%; height:100%;">
+                                                <input type="button" onclick="BackToImage()" class="btn-block btn-guardian stretch" value="Back" />
+                                            </td>
+                                            <td style="width:33.34%; height:100%;">
+                                                <input type="button" value="Cancel" onclick="location.reload()" class="btn-block btn-guardian stretch" />
+                                            </td>
+                                            <td style="width:33.34%; height:100%;">
+                                                <input type="button" class="btn-block btn-guardian stretch" value="Continue" onclick="changeDescription();setSummary('description')" />
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="tab-pane fade stretch" style="position:relative;" id="Summary">
+                            <div class="panel stretch" style="position:relative;">
+                                <div class="panel-heading" style="padding:5px;">
+                                    <h4>Summary</h4>
+                                </div>
+                                <div class="panel-body" style="height:100%;width:100%;position:relative;">
+                                    <div style="background-color:#fff;line-height:1.7;text-align:left;padding-left:15px;padding-right:15px;padding-top:30px;">
+                                        <div class="post">
+                                            <div class="user-block">
+                                                <img class="img-circle img-bordered-sm" id="imageSummary" style="width:70px;height:70px" alt="user image">
+                                                <span style="margin-left:90px" class="username">
+                                                    Fault Summary
+                                                </span>
+                                                <span class="description" style="margin-left:90px;"><strong>Date</strong> <label style="font-weight:normal;" id="DateLabel"></label></span>
+                                                <span class="description" style="margin-left:90px;"><strong>Category</strong> <label style="font-weight:normal;" id="CatLabel"></label></span>
+                                                <span class="description" style="margin-left:90px;"><strong>Sub-Category</strong> <label style="font-weight:normal;" id="subCatLabel"></label></span>
+                                                <span class="description" style="margin-left:90px;"><strong>Severity</strong> <label style="font-weight:normal;" id="SeverityLabel"></label></span>
+                                            </div>
+                                            <!-- /.user-block -->
+                                            <p>
+                                                <strong>Address:</strong> <label style="font-weight:normal;" id="addressLabel"></label>
+                                            </p>
+                                            <p>
+                                                <strong>Description:</strong> <label style="font-weight:normal;" id="descLabel"></label>
+                                            </p>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="panel-footer" style="position:absolute;bottom:0;width:100%;padding:0;height:40px">
+                                    <table style="width:100%; height:100%;">
+                                        <tr style="width:100%;height:100%;">
+                                            <td style="width:33.34%; height:100%;">
+                                                <input type="button" value="Back" onclick="BackToDescription()" class="btn-block btn-guardian stretch" />
+                                            </td>
+                                            <td style="width:33.34%; height:100%;">
+                                                <input type="button" value="Cancel" onclick="location.reload()" class="btn-block btn-guardian stretch" />
+
+                                            </td>
+                                            <td style="width:33.34%; height:100%;">
+                                                <input type="submit" class="btn-block btn-guardian stretch" value="Confirm" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                                }
+    </div>
+                                }
+                                else
+                                {
+                                    @section AddToHead{
+                                        <link href="~/Content/css/style.css" rel="stylesheet" type="text/css" />
+                                        <style type="text/css">
+                                            html, body {
+                                                height: 100%;
+                                            }
+
+                                            .fullDiv {
+                                                height: 100%;
+                                            }
+
+                                            .stretch {
+                                                height: 100%;
+                                                width: 100%;
+                                            }
+
+                                            .content-wrapper-hack {
+                                                min-height: 100%;
+                                                width: 100%;
+                                                position: absolute;
+                                            }
+
+                                            .content-hack {
+                                                height: 100%;
+                                                position: absolute;
+                                            }
+
+                                            body {
+                                                line-height: 0px;
+                                            }
+
+                                            .panel-footer {
+                                                border-bottom-left-radius: 0;
+                                                border-bottom-right-radius: 0;
+                                            }
+
+                                            .hide-chat {
+                                                display: none;
+                                            }
+                                        </style>
+                                    }
+
+                                    <div style="padding-bottom:44px;padding-right:0;height:100%;color:#fff;">
+                                        @using (Html.BeginForm("ReportFault", "Faults", FormMethod.Post, new { @style = "height:100%;" }))
+                {
+                                            <div class="text-center" data-stellar-background-ratio="0.5" style="width:100%;height:100%;">
+                                                <div class="fullDiv">
+                                                    <div style="display:inline-block; position:relative;font-size:17px;z-index:1000;">
+                                                        <ul id="tabs" class="nav navbar-inverse nav-tabs" style="z-index:100;color:#FCC72C;" data-tabs="tabs">
+                                                            <li role="presentation" class="active">
+                                                                <a href="#Location" id="LocationTab" data-toggle="tab">
+                                                                    <span style="vertical-align:middle;" class="fa fa-map"></span>
+                                                                    <span class="hidden-xs" style="vertical-align:middle;">Location</span>
+                                                                    <span style="vertical-align:middle;" class="fa fa-chevron-right"></span>
+                                                                </a>
+                                                            </li>
+                                                            <li role="presentation">
+                                                                <a href="#Category" id="CategoryTab">
+                                                                    <span style="vertical-align:middle;" class="fa fa- fa-tag"></span>
+                                                                    <span class="hidden-xs" style="vertical-align:middle;">Category</span>
+                                                                    <span style="vertical-align:middle;" class="fa fa-chevron-right"></span>
+                                                                </a>
+                                                            </li>
+                                                            <li role="presentation">
+                                                                <a href="#Severity" id="SeverityTab">
+                                                                    <span class="fa fa-line-chart" style="vertical-align:middle;"></span>
+                                                                    <span class="hidden-xs" style="vertical-align:middle;">Severity</span>
+                                                                    <span style="vertical-align:middle;" class="fa fa-chevron-right"></span>
+                                                                </a>
+                                                            </li>
+                                                            <li role="presentation">
+                                                                <a href="#Image" id="ImageTab">
+                                                                    <span style="vertical-align:middle;" class="fa fa-camera"></span>
+                                                                    <span class="hidden-xs" style="vertical-align:middle;">Image</span>
+                                                                    <span style="vertical-align:middle;" class="fa fa-chevron-right"></span>
+                                                                </a>
+                                                            </li>
+                                                            <li role="presentation">
+                                                                <a href="#Description" id="DescriptionTab">
+                                                                    <span style="vertical-align:middle;" class="fa fa-pencil-square-o"></span>
+                                                                    <span class="hidden-xs" style="vertical-align:middle;">Description</span>
+                                                                    <span style="vertical-align:middle;" class="fa fa-chevron-right"></span>
+                                                                </a>
+                                                            </li>
+                                                            <li role="presentation">
+                                                                <a href="#Summary" id="SummaryTab">
+                                                                    <span class="fa fa-list"></span>
+                                                                    <span style="vertical-align:middle;" class="fa fa-check"></span>
+                                                                    <span class="hidden-xs" style="vertical-align:middle;">Confirm</span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div id="my-tab-content" style="position:relative;z-index:1000;" class="tab-content fullDiv report-content">
+                                                        <div class="tab-pane fade in active" id="Location" style="height:100%;position:relative;">
+                                                            <div class="panel" style="height:100%;position:relative;">
+                                                                <div class="panel-heading">
+                                                                    <h4>Position</h4>
+                                                                </div>
+                                                                <div class="panel-body" style="height:85%;position:relative;">
+                                                                    @Html.AntiForgeryToken()
+                                                                    <input type="hidden" id="userId" value="@ViewBag.UserId" />
+                                                                    <div id="map1" class="stretch"></div>
+                                                                    <input name="latitude" id="latitude" class="hidden" />
+                                                                    <input name="longitude" id="longitude" class="hidden" />
+                                                                </div>
+                                                                <div class="panel-footer" style="position:absolute;bottom:0;width:100%;padding:0;height:40px">
+                                                                    <table style="width:100%; height:100%;">
+                                                                        <tr style="width:100%;height:100%;">
+                                                                            <td style="width:33.33%;height:100%;">
+                                                                                <input type="button" value="------" readonly="readonly" class="btn-block btn-guardian stretch" />
+                                                                            </td>
+                                                                            <td style="width:33.33%;height:100%;">
+                                                                                <input type="button" value="Cancel" onclick="location.reload()" class="btn-block btn-guardian stretch" />
+                                                                            </td>
+                                                                            <td style="width:33.34%; height:100%;">
+                                                                                <input type="button" onclick="setSummary('location');changeLocation();" class="btn-block btn-guardian stretch" value="Continue" />
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="tab-pane fade" id="Category" style="height:100%;position:relative;">
+                                                            @{
+                                                                var categories = (from x in db.Categories orderby x.Count descending select x).ToList();
+                                                            }
+                                                            <div class="panel" style="height:100%;position:relative;">
+                                                                <div class="panel-heading">
+                                                                    <h4>Select the Category of the Fault</h4>
+                                                                </div>
+                                                                <input type="hidden" name="categoryId" id="categoryId" />
+                                                                <div class="panel-body" style="position:relative; height:100%;width:100%;">
+
+                                                                    <div style="width:100%;height:466px;position:relative;" class="center-block">
+                                                                        @foreach (var cat in categories.Take(9))
+                                                                        {
+                                                                            <div class="switch" style="float:left;">
+                                                                                <input id="@("cmn-toggle-" + cat.CategoryId)" class="cmn-toggle cmn-toggle-yes-no" value="@cat.CategoryId" type="radio" name="category" />
+                                                                                <label id="@("Label" + cat.CategoryId)" for="@("cmn-toggle-" + cat.CategoryId)">
+                                                                                    <img class="imgFront" src="~/Content/img/@cat.Image" height="125" width="125" />
+                                                                                    <img class="imgBack" src="~/Content/img/@cat.Image.Replace(".png", "Label.png")" width="125" height="125" />
+                                                                                </label>
+                                                                            </div>
+                                                                        }
+                                                                        <div class="col-xs-12" style="position:absolute;bottom:15px;width:100%;">
+                                                                            <select class="selectpicker" data-style="btn-guardian" style="width:100%;" onchange="CreateSelect(this);SetCatSummary(this);setCategory(this);">
+                                                                                <option selected="selected">Other</option>
+                                                                                @for (int i = 9; i < categories.Count; i++)
+                                                                                {
+                                                                                    <option value="@categories[i].CategoryId">@categories[i].Name</option>
+                                                                                }
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="panel-footer" style="position:absolute;bottom:0;width:100%;padding:0;height:40px">
+                                                                    <table style="width:100%; height:100%;">
+                                                                        <tr style="width:100%;height:100%;">
+                                                                            <td style="width:33.33%;height:100%;">
+                                                                                <input type="button" value="Back" onclick="BackToLocation()" class="btn-block btn-guardian stretch" />
+                                                                            </td>
+                                                                            <td style="width:33.33%;height:100%;">
+                                                                                <input type="button" value="Cancel" onclick="location.reload()" class="btn-block btn-guardian stretch" />
+                                                                            </td>
+                                                                            <td style="width:33.34%; height:100%;">
+                                                                                <input type="button" onclick="checkCategory()" class="btn-block btn-guardian stretch" value="Continue" />
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane fade" id="Severity" style="height:100%;position:relative;">
+                                                            <div class="panel" style="height:100%">
+                                                                <div class="panel-heading" style="text-align:center;">
+                                                                    <h4>How Bad Is The Fault?</h4>
+                                                                </div>
+                                                                <div class="panel-body">
+                                                                    <img class="center-block" id="imgRange" width="200" height="200" />
+
+                                                                    <div id="slider">
+                                                                        <hr />
+                                                                        <input type="range" list="settings" name="SeveritySlider" id="rangeinput" min="1" max="10" step="1" value="5" class="bar" onchange="rangevalue.value = value;changeImg();" />
+                                                                        <hr />
+                                                                        <span class="highlight"></span>
+                                                                        <output id="rangevalue" style="text-align:center; font-size:17px;font-weight:bold;" class="btn btn-guardian">5</output>
+                                                                        <hr />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="panel-footer" style="position:absolute;bottom:0;width:100%;padding:0;height:40px">
+                                                                    <table style="width:100%; height:100%;">
+                                                                        <tr style="width:100%;height:100%;">
+                                                                            <td style="width:33.33%;height:100%;">
+                                                                                <input type="button" value="Back" onclick="BackToCategory()" class="btn-block btn-guardian stretch" />
+                                                                            </td>
+                                                                            <td style="width:33.33%;height:100%;">
+                                                                                <input type="button" value="Cancel" onclick="location.reload()" class="btn-block btn-guardian stretch" />
+                                                                            </td>
+                                                                            <td style="width:33.34%; height:100%;">
+                                                                                <input type="button" onclick="changeSeverity();" class="btn-block btn-guardian stretch" value="Continue" />
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane fade stretch" id="Image">
+                                                            <div class="center-block stretch" style="position:relative;">
+                                                                <div class="panel stretch" style="position:relative;">
+                                                                    <div class="panel-heading" style="padding:5px;">
+                                                                        <h4>Upload Image</h4>
+                                                                    </div>
+                                                                    <div class="panel-body" style="height:100%;width:100%;position:relative;">
+                                                                        <div id="WebCam" class="hidden">
+                                                                            <div style="position:absolute;width:100%; height:100%; padding:5px; border:1px black solid;border-radius:10px;">
+                                                                                <div id="my_camera" class="center-block"></div>
+                                                                                <img class="hidden" id="imageURL" src="" style="width:100%;height:100%; overflow:hidden;" alt="" />
+                                                                                <button type="button" onclick="take_snapshot();" class="btn btn-guardian center-block" style="width:45px;border-radius:45px;margin-top:20px;"><span class="fa fa-camera"></span></button>
+                                                                            </div>
+                                                                            <!-- A button for taking snaps -->
+                                                                            <input type="hidden" id="base64Label" name="base64Label" />
+                                                                            <p id="myResult"></p>
+                                                                        </div>
+                                                                        <div id="fileUpload" class="hidden">
+                                                                            <div style="width:100%;padding:15px;height:400px">
+                                                                                <img id="fileUploadImage" style="width:100%;height:100%;border-radius:15px" />
+                                                                            </div>
+                                                                            <div style="width:100%;position:absolute;height:30px;bottom:0;margin:0 0 125px -15px">
+                                                                                <label class="btn btn-guardian btn-file center-block" style="width:45px;border-radius:45px;">
+                                                                                    <span class="fa fa-camera" style="vertical-align:middle;"></span><input type="file" id="fileInput">
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- First, include the Webcam.js JavaScript Library -->
+                                                                        <script type="text/javascript" src="~/Content/js/plugins/WebCam/webcam.js"></script>
+                                                                        <!-- Configure a few settings and attach camera -->
+                                                                        <script language="JavaScript">
+                                                var fileUpload = document.getElementById('fileUpload');
+                                                var my_camera = document.getElementById('my_camera');
+                                                var webCam = document.getElementById('WebCam');
+                                                var hasFlash = false;
+                                                try {
+                                                    var fo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+                                                    if (fo) {
+                                                        hasFlash = true;
+                                                    }
+                                                } catch (e) {
+                                                    if (navigator.mimeTypes
+                                                          && navigator.mimeTypes['application/x-shockwave-flash'] != undefined
+                                                          && navigator.mimeTypes['application/x-shockwave-flash'].enabledPlugin) {
+                                                        hasFlash = true;
+                                                    }
+                                                }
+                                                if (hasFlash) {
+                                                    webCam.setAttribute('class','');
+                                                    Webcam.set({
+                                                        // live preview size
+                                                        width: 320,
+                                                        height: 240,
+
+                                                        // device capture size
+                                                        dest_width: 640,
+                                                        dest_height: 480,
+
+                                                        // final cropped size
+                                                        crop_width: 480,
+                                                        crop_height: 480,
+
+                                                        // format and quality
+                                                        image_format: 'jpeg',
+                                                        jpeg_quality: 90,
+
+                                                        // flip horizontal (mirror mode)
+                                                        flip_horiz: true
+                                                    });
+                                                    Webcam.attach('#my_camera');
+                                                } else {
+                                                    fileUpload.setAttribute('class', '');
+                                                    webCam.setAttribute('class', 'hidden');
+                                                }
+                                                                        </script>
+                                                                    </div>
+                                                                    <div class="panel-footer" style="position:absolute;bottom:0;width:100%;padding:0;height:40px">
+                                                                        <table style="width:100%; height:100%;">
+                                                                            <tr style="width:100%;height:100%;">
+                                                                                <td style="width:33.34%; height:100%;">
+                                                                                    <input type="button" value="Back" onclick="BackToSeverity()" class="btn-block btn-guardian stretch" />
+                                                                                </td>
+                                                                                <td style="width:33.34%; height:100%;">
+                                                                                    <input type="button" value="Cancel" onclick="location.reload()" class="btn-block btn-guardian stretch" />
+
+                                                                                </td>
+                                                                                <td style="width:33.34%; height:100%;">
+                                                                                    <input type="button" class="btn-block btn-guardian stretch" value="Continue" onclick="changeImage()" />
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div id="Description" style="position:relative; height:100%;" class="tab-pane fade">
+                                                            <div class="panel stretch">
+                                                                <div class="panel-heading">
+                                                                    <h4>Description</h4>
+                                                                </div>
+                                                                <div class="panel-body stretch">
+                                                                    <p>
+                                                                        <div id="myDiv"></div>
+                                                                        <input type="hidden" id="subCatId" value="0" name="subCatId" />
+                                                                    </p>
+                                                                    <hr />
+                                                                    @Html.TextAreaFor(model => model.Description, new { @id = "descText", @class = "form-control", @style = "height:364px" })
+                                                                </div>
+                                                                <div class="panel-footer" style="position:absolute;bottom:0; width:100%;padding:0;height:40px">
+                                                                    <table style="width:100%; height:100%;">
+                                                                        <tr style="width:100%;height:100%;">
+                                                                            <td style="width:33.34%; height:100%;">
+                                                                                <input type="button" onclick="BackToImage()" class="btn-block btn-guardian stretch" value="Back" />
+                                                                            </td>
+                                                                            <td style="width:33.34%; height:100%;">
+                                                                                <input type="button" value="Cancel" onclick="location.reload()" class="btn-block btn-guardian stretch" />
+                                                                            </td>
+                                                                            <td style="width:33.34%; height:100%;">
+                                                                                <input type="button" class="btn-block btn-guardian stretch" value="Continue" onclick="changeDescription();setSummary('description')" />
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="tab-pane fade stretch" style="position:relative;" id="Summary">
+                                                            <div class="panel stretch" style="position:relative;">
+                                                                <div class="panel-heading" style="padding:5px;">
+                                                                    <h4>Summary</h4>
+                                                                </div>
+                                                                <div class="panel-body" style="height:100%;width:100%;position:relative;">
+                                                                    <div style="background-color:#fff;line-height:1.7;text-align:left;padding-left:15px;padding-right:15px;padding-top:30px;">
+                                                                        <div class="post">
+                                                                            <div class="user-block">
+                                                                                <img class="img-circle img-bordered-sm" id="imageSummary" style="width:70px;height:70px" alt="user image">
+                                                                                <span style="margin-left:90px" class="username">
+                                                                                    Fault Summary
+                                                                                </span>
+                                                                                <span class="description" style="margin-left:90px;"><strong>Date</strong> <label style="font-weight:normal;" id="DateLabel"></label></span>
+                                                                                <span class="description" style="margin-left:90px;"><strong>Category</strong> <label style="font-weight:normal;" id="CatLabel"></label></span>
+                                                                                <span class="description" style="margin-left:90px;"><strong>Sub-Category</strong> <label style="font-weight:normal;" id="subCatLabel"></label></span>
+                                                                                <span class="description" style="margin-left:90px;"><strong>Severity</strong> <label style="font-weight:normal;" id="SeverityLabel"></label></span>
+                                                                            </div>
+                                                                            <!-- /.user-block -->
+                                                                            <p>
+                                                                                <strong>Address:</strong> <label style="font-weight:normal;" id="addressLabel"></label>
+                                                                            </p>
+                                                                            <p>
+                                                                                <strong>Description:</strong> <label style="font-weight:normal;" id="descLabel"></label>
+                                                                            </p>
+
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="panel-footer" style="position:absolute;bottom:0;width:100%;padding:0;height:40px">
+                                                                    <table style="width:100%; height:100%;">
+                                                                        <tr style="width:100%;height:100%;">
+                                                                            <td style="width:33.34%; height:100%;">
+                                                                                <input type="button" value="Back" onclick="BackToDescription()" class="btn-block btn-guardian stretch" />
+                                                                            </td>
+                                                                            <td style="width:33.34%; height:100%;">
+                                                                                <input type="button" value="Cancel" onclick="location.reload()" class="btn-block btn-guardian stretch" />
+
+                                                                            </td>
+                                                                            <td style="width:33.34%; height:100%;">
+                                                                                <input type="submit" class="btn-block btn-guardian stretch" value="Confirm" />
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                                }
+                                    </div>
+                                                                }
+
+<script type="text/javascript" src="~/Content/js/snazzymaps.js" async defer></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0ggfMf91HoVhnrIQNuvrOUc-74JZFMPY&callback=initMap"></script>
+<script type="text/javascript" src="~/Content/js/ReportFault-Mobile.js"></script>
+<script type="text/javascript">
+    function checkCategory(){
+        if ($('input[name=category]:checked').length > 0) {
+            changeCategory();
+        }else{
+            alert("We Really Need To Know The Category. Try to box this.");
+        }
+    }
+
+    var CatLabel = document.getElementById('CatLabel');
+    @{
+
+        var subCats = (from x in db.SubCategories select x).ToList();
+    }
+
+    function SetCatSummary(id) {
+        switch (id) {
+            @foreach (var cat in cates)
+            {
+                <text>
+                    case @cat.CategoryId:
+                CatLabel.textContent = '@cat.Name';
+                        break;
+                        </text>
+            }
+            default:
+            CatLabel.textContent = "hello world";
+            break;
+        }
+    }
+
+    function setCategory(id) {
+        var inputCat = document.getElementById('categoryId');
+        switch (id) {
+            @foreach (var cat in cates)
+            {
+                <text>
+                    case @(cat.CategoryId):
+                        inputCat.value = @cat.CategoryId;
+                        break;
+                        </text>
+            }
+            default:
+            inputCat.value = 0;
+            break;
+        }
+    }
+
+    $(document).ready(function() {
+        $('input[name=category]:radio').change(function() {
+            if(this.checked==true){
+                var value = parseInt(document.querySelector('input[name="category"]:checked').value);
+                setCategory(value);
+                SetCatSummary(value);
+                if($('#mySelect').length>0){
+                    $('#mySelect').remove();
+                    InitiateSelect(value);
+                }
+                else{
+                    InitiateSelect(value);
+                }
+            }
+        });
+    });
+
+    function InitiateSelect(sel) {
+        var mySelect = document.createElement("SELECT");
+        var myDiv = document.getElementById('myDiv');
+        mySelect.id = "mySelect";
+        mySelect.setAttribute("class", "form-control");
+        mySelect.setAttribute("style", "width:100%;");
+        myDiv.appendChild(mySelect);
+
+        var defaultOption = document.createElement('OPTION');
+        defaultOption.value = 0;
+        defaultOption.text = 'Select';
+        defaultOption.selected = true;
+        mySelect.appendChild(defaultOption);
+        mySelect.setAttribute("onchange", "SetSubCat();")
+
+        switch (sel) {
+            @foreach (var cat in cates)
+            {
+                <text>
+                    case @cat.CategoryId:
+                </text>
+                foreach (var subCat in (from x in subCats where x.CategoryId == cat.CategoryId select x).ToList())
+                {
+                        <text>
+                            var @("option" + subCat.SubCategoryId) = document.createElement("OPTION");
+                            @("option" + subCat.SubCategoryId).value = "@subCat.SubCategoryId";
+                            @("option" + subCat.SubCategoryId).text = "@subCat.Name";
+                            mySelect.appendChild(@("option" + subCat.SubCategoryId));
+                        </text>
+                }
+                <text>
+                        break;
+                </text>
+            }
+        }
+    }
+
+    function SetSubCat() {
+        var SubCatId = document.getElementById('subCatId');
+        var subLabel = document.getElementById('subCatLabel');
+        subLabel.textContent = $("#mySelect :selected").text();
+    }
+
+
+    var userId = document.getElementById('userId').value;
+    var snapShot = document.getElementById('snapShot');
+    var myResult = document.getElementById('base64Label');
+
+    function EL(id) {
+        return document.getElementById(id);
+    } // Get el by ID helper function
+
+    function readFile() {
+        if (this.files && this.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function(e) {
+                EL("imageURL").src = e.target.result;
+                myResult.value = e.target.result;
+                document.getElementById("imageSummary").setAttribute("src",e.target.result);
+                document.getElementById("fileUploadImage").setAttribute("src",e.target.result);
+            };
+            FR.readAsDataURL(this.files[0]);
+        }
+    }
+
+    EL("fileInput").addEventListener("change", readFile, false);
+
+    // preload shutter audio clip
+    var shutter = new Audio();
+    shutter.autoplay = false;
+
+    function take_snapshot() {
+        Webcam.snap(function(data_uri) {
+            try { shutter.currentTime = 0; } catch(e) {;} // fails in IE
+            if(Webcam.freeze()){
+                shutter.src = "../../Content/Music/camera-winding.mp3";
+                shutter.play();
+                Webcam.unfreeze();
+                myResult.value = "";
+                document.getElementById("imageSummary").setAttribute("src","");
+            }
+            else{
+                // freeze camera so user can preview current frame
+                shutter.src = '../../Content/Music/shutter-click.mp3';
+                shutter.play();
+                Webcam.freeze();
+                myResult.value = data_uri;
+                document.getElementById("imageSummary").setAttribute("src",data_uri);
+            }
+        });
+    }
+</script>

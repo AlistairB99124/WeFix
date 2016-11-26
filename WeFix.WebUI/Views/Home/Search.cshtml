@@ -1,0 +1,185 @@
+﻿
+@{
+    ViewBag.Title = "Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using WeFix.Domain.Context
+@using WeFix.Domain.Entities
+@{ 
+    var blogs = ViewBag.BlogResults as List<Blog>;
+    var faults = ViewBag.FaultResults as List<Fault>;
+    var users = ViewBag.UserResults as List<User>;
+    var query = ViewBag.Query as string;
+    var db = new EFDbContext();
+    var helpers = new WeFix.Logic.Helpers();
+}
+<div class="row" style="z-index:5;position:relative; padding:25px;color:#333;">
+    <div class="col-sm-12">
+        <div class="box box-primary center-block">
+            <div class="box-header with-border">
+                <h3 class="box-title">Blog Results</h3>
+            </div>
+            <div class="box-body">
+                @if (blogs.Count > 0)
+                {
+                    <hgroup class="mb20">
+                        <h1 style="color:#333">Search Results</h1>
+                        <h2 style="color:#333" class="lead"><strong class="text-danger">@blogs.Count</strong> results were found for the search for <strong class="text-danger">@query</strong></h2>
+                    </hgroup>
+
+                    <section class="col-xs-12 col-sm-6 col-md-12">
+                        @foreach (var blog in blogs)
+                        {
+                            var user = db.Users.Find(blog.AuthorId);
+                            <article class="search-result row">
+                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <a href="#" title="@blog.Title" class="thumbnail"><img src="@blog.BannerImage.Replace("~","../..")" alt="Banner Image" /></a>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                    <ul class="meta-search">
+                                        <li><i style="color:#333" class="glyphicon glyphicon-calendar"></i> <span style="color:#333">@blog.Date_Published.ToShortDateString()</span></li>
+                                        <li><i style="color:#333" class="glyphicon glyphicon-time"></i> <span style="color:#333">@blog.Date_Published.ToShortTimeString()</span></li>
+                                        <li><i style="color:#333" class="glyphicon glyphicon-tags"></i> <span style="color:#333">@user.FirstName @user.LastName</span></li>
+                                    </ul>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-7 excerpet">
+                                    <h3><a style="color:#333" href="#" onclick="location.href='/Blogs/Article/@blog.BlogId'" title="@blog.Title">@blog.Title</a></h3>
+                                    <div  style="color:#333">
+                                        @Html.Raw(blog.Article.Substring(0, 350)) ............
+                                    </div>                                    
+                                </div>
+                                <span class="clearfix borda"></span>
+                            </article>
+                        }
+                    </section>
+                }
+                else
+                {
+                    <hgroup class="mb20">
+                        <h1>Search Results</h1>
+                        <h2 class="lead"><strong class="text-danger">0</strong> results were found for the search for <strong class="text-danger">@query</strong></h2>
+                    </hgroup>
+                }
+                
+            </div>
+            <div class="box-footer">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="row" style="z-index:5;position:relative; padding:25px;color:#333;">
+    <div class="col-sm-6">
+        <div class="box box-primary center-block">
+            <div class="box-header with-border">
+                <h3 class="box-title">Fault Results</h3>
+            </div>
+            <div class="box-body">
+                @if (faults.Count > 0)
+                {
+                    <hgroup class="mb20">
+                        <h1>Search Results</h1>
+                        <h2 class="lead"><strong class="text-danger">@faults.Count</strong> results were found for the search for <strong class="text-danger">@query</strong></h2>
+                    </hgroup>
+
+                    <section class="col-xs-12 col-sm-6 col-md-12">
+                        @foreach (var fault in faults)
+                        {
+                            var pUser = db.Users.Find(db.PublicUsers.Find(fault.PublicUserId).UserId);
+                            User mUser = null;
+                            if (fault.ManagerId != null)
+                            {
+                                mUser = db.Users.Find(db.PublicUsers.Find(fault.ManagerId).UserId);
+                            }
+
+                            <article class="search-result row">
+                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <a href="#" onclick="location.href='/Faults/DetailsForPublic/@fault.FaultId'" title="Fault-@fault.FaultId" class="thumbnail">
+                                    @if (fault.ImageURL != null)
+                                    {
+                                        <img src="@fault.ImageURL.Replace("~","../..")" alt="Image" />
+                                    }
+                                    </a>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                    <ul class="meta-search">
+                                        <li><i class="glyphicon glyphicon-calendar"></i> <span style="color:#333">@fault.DateCreated.ToShortDateString()</span></li>
+                                        <li><i class="glyphicon glyphicon-time"></i> <span style="color:#333">@fault.DateCreated.ToShortTimeString()</span></li>
+                                        <li><i class="glyphicon glyphicon-user"></i><span style="color:#333">@pUser.FirstName @pUser.LastName</span></li>
+                                    </ul>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-7 excerpet">
+                                    <h3><a href="#" onclick="location.href='/Faults/DetailsForPublic/@fault.FaultId'" title="@fault.Category.Name">@fault.Category.Name</a></h3>
+                                    <label>Sub-Category</label> - @fault.SubCategory.Name
+                                    <label>Severity</label> - @fault.SubCategory.Name
+                                    <label>Address</label> - @helpers.GetAddress(fault.Latitude, fault.Longitude)
+                                    <label>Assigned Manager</label> - @if (fault.ManagerId == null) { <text>No Manager Assigned</text>}else { <text> @mUser.FirstName @mUser.LastName </text> }
+                                    @Html.Raw(fault.Description) ............
+                                </div>
+                                <span class="clearfix borda"></span>
+                            </article>
+                        }
+                        </section>
+                }
+                else
+                {
+                    <hgroup class="mb20">
+                        <h1>Search Results</h1>
+                        <h2 class="lead"><strong class="text-danger">0</strong> results were found for the search for <strong class="text-danger">@query</strong></h2>
+                    </hgroup>
+                }
+</div>
+            <div class="box-footer">
+
+            </div>
+        </div>
+
+    </div>
+    <div class="col-sm-6">
+        <div class="box box-primary center-block">
+            <div class="box-header with-border">
+                <h3 class="box-title">User Results</h3>
+            </div>
+            <div class="box-body">
+                @if (faults.Count > 0)
+                {
+                    <hgroup class="mb20">
+                        <h1>Search Results</h1>
+                        <h2 class="lead"><strong class="text-danger">@faults.Count</strong> results were found for the search for <strong class="text-danger">@query</strong></h2>
+                    </hgroup>
+
+                    <section class="col-xs-12 col-sm-6 col-md-12">
+                        @foreach (var user in users)
+                        {
+                            <article class="search-result row">
+                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <a href="#" title="Fault-@user.Id" class="thumbnail">@if (user.UserPhotoUrl != null)
+                                    {<img src="@user.UserPhotoUrl.Replace("~","../..")" alt="Image" />}</a>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-7 excerpet">
+                                    <h3><a href="#" title="@user.FirstName">@user.LastName</a></h3>                                   
+                                </div>
+                                <span class="clearfix borda"></span>
+                            </article>
+                        }
+                    </section>
+                }
+                else
+                {
+                    <hgroup class="mb20">
+                        <h1>Search Results</h1>
+                        <h2 class="lead"><strong class="text-danger">0</strong> results were found for the search for <strong class="text-danger">@query</strong></h2>
+                    </hgroup>
+                }
+
+</div>
+            <div class="box-footer">
+
+            </div>
+        </div>
+
+    </div>
+</div>

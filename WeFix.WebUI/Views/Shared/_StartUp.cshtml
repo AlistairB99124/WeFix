@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title - WeFix</title>
+    <link href="~/Content/css/font-awesome.css" rel="stylesheet" />
+    <link href="~/Content/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/css/AdminLTE.css" rel="stylesheet" />
+    <link href="~/Content/css/GuardianHack.css" rel="stylesheet" />
+    <style>
+         body{
+            background:none;
+            background-color:none;
+            background-image: url(../../Content/img/background.jpg);
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+    </style>
+    <script src="~/Content/js/plugins/jquery/jquery-2.2.4.js"></script>
+</head>
+<body class="hold-transition register-page">
+    <div class="fh5co-overlay"></div>
+        @RenderBody()     
+    <!-- Bootstrap 3.3.6 -->
+    <script src="~/Content/js/plugins/bootstrap/bootstrap.js"></script>  
+    <script src="~/Content/js/plugins/Masks/jquery.inputmask.date.extensions.js"></script>
+    <script src="~/Content/js/plugins/Masks/jquery.inputmask.extensions.js"></script>
+    <script src="~/Content/js/plugins/Masks/jquery.inputmask.js"></script> 
+</body>
+</html>

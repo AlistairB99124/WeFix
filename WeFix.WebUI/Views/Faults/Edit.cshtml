@@ -1,0 +1,139 @@
+﻿@model WeFix.Domain.Entities.Fault
+@using WeFix.Domain.Context
+@{
+    ViewBag.Title = "Edit";
+}
+@{ 
+    var db = new EFDbContext();
+    var sbCats = (from x in db.SubCategories where x.CategoryId == Model.CategoryId select x).ToList();
+    var selectCat = (from x in sbCats select x).First();
+    var selectSubCat = new SelectList(sbCats, "SubCategoryId", "Name", selectCat.SubCategoryId);
+}
+<div style="padding-left:25px;padding-right:25px">
+<div style="position:relative;z-index:5;padding-left:25px;padding-right:25px;" class="well">
+<h2 style="color:#FFF">Edit</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()    
+    <div class="form-horizontal">
+        <h4 style="color:#FFF">Fault: @Model.FaultId</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.FaultId)
+        @Html.HiddenFor(model=>model.PublicUserId)
+        @Html.HiddenFor(model=>model.DateCreated)
+        @Html.HiddenFor(model=>model.NotStarted)
+        @Html.HiddenFor(model=>model.InProgress)
+        @Html.HiddenFor(model=>model.Resolved)
+        @Html.HiddenFor(model=>model.ImageURL)
+        <div class="form-group">
+            @Html.LabelFor(model => model.DateCreated, htmlAttributes: new { @class = "control-label col-sm-2", @style="color:#FFF" })
+            <div class="col-sm-10" style="color:#FFF">
+                @Html.DisplayFor(model => model.DateCreated, new { htmlAttributes = new { @class = "form-control", @disabled="disabled", @readonly="readonly", @style = "color:#FFF" } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-sm-2", @style = "color:#FFF" })
+            <div class="col-sm-10">
+                @Html.TextAreaFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", @style="width:100%;max-width:100%" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Latitude, htmlAttributes: new { @class = "control-label col-sm-2", @style = "color:#FFF" })
+            <div class="col-sm-10">
+                @Html.EditorFor(model => model.Latitude, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Latitude, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Longitude, htmlAttributes: new { @class = "control-label col-sm-2", @style = "color:#FFF" })
+            <div class="col-sm-10">
+                @Html.EditorFor(model => model.Longitude, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Longitude, "", new { @class = "text-danger" })
+            </div>
+        </div>       
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="color:#FFF" for="imageFault">Image</label>
+            <div class="col-sm-10">
+                @if (Model.ImageURL != null)
+                {
+                    <img id="imageFault" src="@Model.ImageURL.Replace("~","../..")" width="150" height="150" alt="Fault Image" />
+                }
+                
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="color:#FFF" for="CategoryId">Category</label>
+            <div class="col-sm-10">
+                @Html.DropDownList("CategoryId", null, htmlAttributes: new { @class = "form-control", @id="CategoryId" })
+                @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="color:#FFF" for="SubCategoryId">Sub-Category</label>
+            <div class="col-sm-10">
+                @Html.DropDownList("SubCategoryId", selectSubCat, htmlAttributes: new { @class = "form-control", @id = "SubCategoryId" })
+                @Html.ValidationMessageFor(model => model.SubCategoryId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="color:#FFF" for="SeverityId">Severity</label>
+            <div class="col-sm-10">
+                @Html.DropDownList("SeverityId", null, htmlAttributes: new { @class = "form-control", @id="SeverityId" })
+                @Html.ValidationMessageFor(model => model.SeverityId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+       
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="color:#FFF">Manager Assigned</label>
+            <div class="col-sm-10">
+                @if (Model.ManagerId==null)
+                {
+                    <p style="color:#FFF">No Manager Assigned</p>
+                }
+                else
+                {
+                    var manager = db.DepartmentManagers.Find(Model.ManagerId);
+                    var user = db.Users.Find(manager.UserId);
+                    <p style="color:#FFF">@user.FirstName @user.LastName</p>
+                }
+                @Html.ValidationMessageFor(model => model.ManagerId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="color:#FFF" for="status-label">Status</label>
+            <div class="col-sm-10">
+                @if (Model.NotStarted)
+                {
+                    <p id="status-label" style="color:#FFF">Not Started</p>
+                }
+                else if (Model.InProgress)
+                {
+                    <p id="status-label" style="color:#FFF">In Progress</p>
+                }
+                else
+                {
+                    <p id="status-label" style="color:#FFF">Resolved</p>
+                }               
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "PublicIndex")
+</div>
+    </div>
+</div>

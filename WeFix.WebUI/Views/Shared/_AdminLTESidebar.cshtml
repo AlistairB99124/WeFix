@@ -1,0 +1,61 @@
+﻿<aside class="main-sidebar" style="position:absolute; top:0; bottom:0;height:100%;background:#fff;">
+    @using Microsoft.AspNet.Identity
+    @{ 
+        var db = new WeFix.Domain.Context.EFDbContext();
+        var userId = HttpContext.Current.User.Identity.GetUserId();
+        var depMan = (from x in db.DepartmentManagers where x.UserId == userId select x).FirstOrDefault();
+        var orgMan = (from x in db.OrganisationManagers where x.UserId == userId select x).FirstOrDefault();
+    }
+    <section class="sidebar" style="background:#fff">
+        @* BEGIN Search *@
+        @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @class = "sidebar-form" }))
+        {
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search...">
+                <span class="input-group-btn">
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </span>
+            </div>
+        }
+        @* END Search *@
+        @* BEGIN Menu *@
+        <ul class="sidebar-menu">
+            <li class="header">Main Navigation</li>
+            <li><a href="#" onclick="location.href='@Url.Action("Dashboard","Organisations",null)'"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
+            @if (orgMan != null)
+            {
+                <li><a href="#" onclick="location.href='@Url.Action("Management","Organisations",null)'"><i class="fa fa-tasks"></i> <span>Management</span></a></li>
+            }
+            else
+            {
+                <li><a href="#" onclick="location.href='@Url.Action("Management","Departments",null)'"><i class="fa fa-tasks"></i> <span>Management</span></a></li>
+            }
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-edit"></i> <span>Blogs</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-down pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="#" onclick="location.href='@Url.Action("Create","Blogs",null)'"><i class="fa fa-circle-o"></i>Create</a></li>
+                    <li><a href="#" onclick="location.href='@Url.Action("Index","Blogs",null)'"><i class="fa fa-circle-o"></i>List</a></li>
+                </ul>
+            </li>
+            <li><a href="#" onclick="location.href='@Url.Action("Index","Home",null)'"><i class="fa fa-exchange"></i><span>Return to Site</span></a></li>          
+            <li><a href="#" onclick="location.href='@Url.Action("Contact","Home",null)'"><i class="fa fa-phone"></i><span>Contact Us</span></a></li>
+        </ul>
+        <ul class="sidebar-menu" style="position:absolute;bottom:0;left:0;position:fixed;">
+            <li>
+                <a href="#"><i class="fa fa-lock"></i> <span>Privacy Policy</span></a>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-cogs"></i> <span>Terms and Conditions</span></a>
+            </li>
+        </ul>
+        @* END Menu *@
+    </section>
+
+</aside>

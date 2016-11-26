@@ -1,0 +1,150 @@
+﻿@model WeFix.WebUI.Models.ExternalLoginConfirmationViewModel
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_StartUp.cshtml";
+}
+@{
+    var db = new WeFix.Domain.Context.EFDbContext();
+    var countries = (from x in db.Countries select x).ToList();
+    var selectItemList = new SelectList(countries, "CountryAccessCode", "CountryName", "+27");
+}
+<div class="login-box" style="z-index:5; position:relative;">
+    <div class="login-logo">
+        <a style="color:#fff;" href="#">We<b>Fix</b></a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="login-box-body">
+        <p class="login-box-msg">You've successfully authenticated with <strong>@ViewBag.LoginProvider</strong>.
+        Please complete the information below and click the Register button to finish
+        logging in.</p>
+        <ul id="tabs" class="nav nav-tabs" style="z-index:2;" data-tabs="tabs">
+            <li role="presentation" class="active">
+                <a href="#noContent" id="noContentTab" data-toggle="tab">
+                    As Public
+                </a>
+            </li>
+            <li role="presentation">
+                <a href="#OrgData" id="OrganisationTab" data-toggle="tab">
+                    As Organisation
+                </a>
+            </li>
+        </ul>
+        @using (Html.BeginForm("ExternalLoginConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane active in fade" id="noContent">
+                
+                </div>
+                <div class="tab-pane fade" id="OrgData">
+                    <div class="form-group has-feedback">
+                        <div class="checkbox">
+                            <label>@Html.CheckBoxFor(m => m.IsManager, new { @id = "checkButton" })Register a new Organisation</label>
+
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="form-group has-feedback">
+                        @Html.TextBoxFor(m => m.OrganisationName, new { @class = "form-control disabled", @id = "orgText", @disabled = "disabled", @placeholder = "Organisation Name" })
+                        <span class="glyphicon glyphicon-home form-control-feedback"></span>
+                        @Html.ValidationMessageFor(m => m.OrganisationName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @placeholder = "First Name", @id = "firstNameText" })
+                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                    @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group has-feedback">
+                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @placeholder = "Last Name", @id = "lastNameText" })
+                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                    @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group has-feedback">
+                    <table>
+                        <tr>
+                            <td style="width:30%">
+                                @Html.DropDownList("CountryCode", selectItemList, htmlAttributes: new { @class = "form-control", @style = "padding:0;", @id = "countryCodeSelect" })
+                            </td>
+                            <td style="width:10%">
+                                <input type="text" style="padding:0px; text-align:center;" value="(0)" readonly="readonly" disabled="disabled" class="form-control" />
+                            </td>
+                            <td style="width:60%">
+                                @Html.TextBoxFor(m => m.Cell, new { @class = "form-control", @id = "cellText" })
+                                <span class="glyphicon glyphicon-phone form-control-feedback"></span>
+                                @Html.ValidationMessageFor(m => m.Cell, "", new { @class = "text-danger" })
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="form-group has-feedback">
+                    <div class="input-group">
+                        <label class="input-group-btn">
+                            <span class="btn btn-primary btn-block btn-flat">
+                                Browse… <input type="file" style="display:none" name="UserPhoto" onchange="displayName()" id="fileUpload" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                            </span>
+                        </label>
+                        <input type="text" class="form-control" id="uploadText" readonly="" placeholder="Upload Profile Image">
+                    </div>
+                    <input type="hidden" id="base64" name="base64" />
+                </div>
+                <div class="form-group has-feedback">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Email", @id = "emailText", @name = "EmailText" })
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                </div>               
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox"> I agree to the <a href="#">terms</a>
+                                </label>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-xs-4">
+                            <button type="submit" class="btn btn-primary btn-block btn-flat">Register</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </div>
+        }
+    </div>
+</div>
+<script type="text/javascript">
+    function displayName() {
+        var x = document.getElementById("fileUpload");
+        var txt = "";
+        if ('files' in x) {
+            if (x.files.length == 0) {
+                txt = "Select one or more files.";
+            } else {
+                for (var i = 0; i < x.files.length; i++) {
+                    var file = x.files[i];
+                    if ('name' in file) {
+                        txt += file.name;
+                    }
+                    if ('size' in file) {
+                        txt += " [" + file.size + "]";
+                    }
+                }
+            }
+        }
+        document.getElementById("uploadText").value = txt;
+    }
+   
+
+    function EL(id) { return document.getElementById(id); } // Get el by ID helper function
+
+    function readFile() {
+        if (this.files && this.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function (e) {
+                EL("base64").value = e.target.result;
+            };
+            FR.readAsDataURL(this.files[0]);
+        }
+    }
+   
+    EL("fileUpload").addEventListener("change", readFile, false);
+</script>

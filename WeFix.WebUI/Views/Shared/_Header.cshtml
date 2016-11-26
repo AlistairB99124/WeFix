@@ -1,0 +1,571 @@
+﻿@using WeFix.Domain.Context
+@using WeFix.Domain.Entities
+@using Microsoft.AspNet.Identity
+@using System.Data.Entity;
+@{
+    var userId = HttpContext.Current.User.Identity.GetUserId();
+    var db = new EFDbContext();
+    var user = db.Users.Find(userId);
+    string role = string.Empty;
+    Organisation organisation = null;
+    Department department = null;
+    int countFaults = 0;
+    Fault mostCommon = null;
+    List<Fault> faults = null;
+    Category mostCommonCategory = null;
+    var organisationManager = (from x in db.OrganisationManagers where x.UserId == userId select x).FirstOrDefault();
+    var departmentManager = (from x in db.DepartmentManagers where x.UserId == userId select x).FirstOrDefault();
+    var publicUser = (from x in db.PublicUsers where x.UserId == userId select x).FirstOrDefault();
+    var messages = (from x in db.ChatMessages where x.toUserId == user.Id && x.Viewed == false select x).ToList();
+    List<DepartmentManager> relManagers = new List<DepartmentManager>();
+    List<PublicUser> relPUsers = new List<PublicUser>();
+    var duplicatedOnlineUsers = new List<User>();
+    var onlineUsers = new List<User>();
+    if (organisationManager != null)
+    {
+        role = "Organisation Manager";
+        organisation = (from x in db.Organisations where x.OrganisationId == organisationManager.OrganisationId select x).FirstOrDefault();
+        faults = (from x in db.Faults where x.ManagerId == organisationManager.OrganisationId select x).ToList();
+        var orgsManagers = (from x in db.DepartmentManagers where x.Department.OrganisationId == organisation.OrganisationId select x).ToList();
+        foreach (var m in orgsManagers)
+        {
+            var userProfile = db.Users.Find(m.UserId);
+            if (userProfile.IsOnline)
+            {
+                duplicatedOnlineUsers.Add(userProfile);
+            }
+        }
+        onlineUsers = duplicatedOnlineUsers.Distinct().ToList();
+    }
+    else if (departmentManager != null)
+    {
+        role = "Department Manager";
+        department = (from x in db.Departments where x.DepartmentId == departmentManager.DepartmentId select x).FirstOrDefault();
+        organisation = (from x in db.Organisations where x.OrganisationId == department.OrganisationId select x).FirstOrDefault();
+        var allMFaults = (from x in db.Faults where x.ManagerId == departmentManager.DepartmentManagerId select x).ToList();
+        faults = new List<Fault>();
+        foreach (var f in allMFaults)
+        {
+            var mf = (from x in db.Faults where x.PublicUserId == f.PublicUserId select x).FirstOrDefault();
+            faults.Add(mf);
+        }
+        var manager = (from x in db.DepartmentManagers where x.UserId == userId select x).FirstOrDefault();
+        var faultsOnline = (from x in db.Faults where x.ManagerId == manager.DepartmentManagerId select x).ToList();
+        var pubUsers = (from x in db.PublicUsers select x).ToList();
+        foreach (var p in faultsOnline)
+        {
+            foreach (var u in pubUsers)
+            {
+                if (p.PublicUserId == u.PublicUserId)
+                {
+                    relPUsers.Add(u);
+                }
+            }
+        }
+        foreach (var p in relPUsers)
+        {
+            var userProfile = db.Users.Find(p.UserId);
+            if (userProfile.IsOnline)
+            {
+                duplicatedOnlineUsers.Add(userProfile);
+            }
+        }
+        onlineUsers = duplicatedOnlineUsers.Distinct().ToList();
+    }
+    else if (publicUser != null)
+    {
+        role = "Public User";
+        faults = (from x in db.Faults where x.PublicUserId == publicUser.PublicUserId select x).ToList();
+        if (faults.Count != 0)
+        {
+            countFaults = faults.Count();
+            mostCommon = faults.GroupBy(i => i).OrderByDescending(grp => grp.Count()).Select(grp => grp.Key).First();
+            mostCommonCategory = db.Categories.Find(mostCommon.CategoryId);
+            var allPFaults = (from x in db.Faults where x.PublicUserId == publicUser.PublicUserId select x).ToList();
+            faults = new List<Fault>();
+            foreach (var f in allPFaults)
+            {
+                var pf = (from x in db.Faults where x.PublicUserId == f.PublicUserId select x).FirstOrDefault();
+                faults.Add(pf);
+            }
+        }
+        var faultsOnline = (from x in db.Faults where x.PublicUser.UserId == user.Id select x).ToList();
+        var dpetManagers = (from x in db.DepartmentManagers select x).ToList();
+        foreach (var fault in faultsOnline)
+        {
+            foreach (var d in dpetManagers)
+            {
+                if (fault.ManagerId == d.DepartmentManagerId)
+                {
+                    relManagers.Add(d);
+                }
+            }
+        }
+        foreach (var dd in relManagers)
+        {
+            var userProfile = db.Users.Find(dd.UserId);
+            if (userProfile.IsOnline == true)
+            {
+                duplicatedOnlineUsers.Add(userProfile);
+            }
+        }
+        onlineUsers = duplicatedOnlineUsers.Distinct().ToList();
+    }
+    else
+    {
+        role = "";
+        faults = new List<Fault>();
+
+    }
+    var departmentToComplain = db.Departments.ToList();
+    var dmanagersToComplain = new List<DepartmentManager>();
+    if (faults.Any())
+    {
+        foreach(var f in faults)
+        {
+            foreach(var d in departmentToComplain)
+            {
+                if (f.CategoryId == d.CategoryId)
+                {
+                    var dm = (from x in db.DepartmentManagers where x.DepartmentId == d.DepartmentId select x).FirstOrDefault();
+                    dmanagersToComplain.Add(dm);
+                }
+            }
+        }
+    }
+    List<DepartmentManager> managersToComplain = dmanagersToComplain.Distinct().ToList();
+
+}    
+    @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+    {
+        <header class="main-header">
+            @* BEGIN Logo *@
+            <a href="@Url.Action("Index", "Home")" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini">W<b>F</b></span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg">We<b>Fix</b></span>
+            </a>
+            @* END Logo *@
+            @* BEGIN Header *@
+            <nav class="navbar navbar-static-top" role="navigation">
+                <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown messages-menu" title="Phone a manager">
+                            @if (managersToComplain.Any())
+                            {
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-phone"></i>
+                                    <span class="label label-info">@managersToComplain.Count</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="header">You have @managersToComplain.Count managers</li>
+                                    <li>
+                                        <!-- inner menu: contains the actual data -->
+                                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;">
+                                            <ul class="menu">
+                                                @foreach (var manager in managersToComplain)
+                                                {
+                                                    var manFaults = (from x in db.Faults where x.ManagerId == manager.DepartmentManagerId select x).ToList();
+                                                    var conUser = (from x in db.Users where x.Id == manager.UserId select x).FirstOrDefault();
+                                                    foreach (var mf in manFaults)
+                                                    {
+                                                        <li>
+                                                            <!-- start message -->
+                                                            <a href="tel:@conUser.Cell.Replace(" ","-")">
+                                                                <div class="pull-left">
+                                                                    <img src="@conUser.UserPhotoUrl.Replace("~","../..")" class="img-circle" alt="User Image">
+                                                                </div>
+                                                                <h4>
+                                                                    @conUser.FirstName @conUser.LastName
+                                                                    <small><i class="fa fa-wrench"></i> @mf.FaultId</small>
+                                                                </h4>
+                                                                <p style="padding-top:5px">@conUser.Cell</p>
+                                                            </a>
+                                                        </li>
+                                                        <!-- end message -->
+                                                    }
+
+                                                }
+
+                                            </ul>
+                                            <div class="slimScrollBar" style="width: 3px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px; background: rgb(0, 0, 0);"></div><div class="slimScrollRail" style="width: 3px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(51, 51, 51);"></div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            }
+                            else
+                            {
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-phone"></i>
+                                    <span class="label label-success">0</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="header">You have 0 messages</li>
+                                    <li class="footer"><a href="#" onclick="showUsers()">View Online Users</a></li>
+                                </ul>
+                            }
+                        </li>
+                        <li class="dropdown messages-menu" title="Messages">
+                            @if (messages.Any())
+                            {
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-envelope-o"></i>
+                                    <span class="label label-success">@messages.Count</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="header">You have @onlineUsers.Count users online</li>
+                                    <li>
+                                        <!-- inner menu: contains the actual data -->
+                                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;">
+                                            <ul class="menu">
+                                                @foreach (var message in messages)
+                                                {
+                                                    var conUser = (from x in db.Users where x.Id == message.fromUserId select x).FirstOrDefault();
+                                                    <li>
+                                                        <!-- start message -->
+                                                        <a href="#" onclick="location.href='@Url.Action("ChatRoom","Home",new { query = conUser.Id })'">
+                                                            <div class="pull-left">
+                                                                <img src="@conUser.UserPhotoUrl.Replace("~","../..")" class="img-circle" alt="User Image">
+                                                            </div>
+                                                            <h4>
+                                                                @conUser.FirstName @conUser.LastName
+                                                                <small><i class="fa fa-clock-o"></i> @((DateTime.Now - conUser.LastOnline).TotalMinutes.ToString("F0")) mins</small>
+                                                            </h4>
+                                                            <p style="padding-top:5px">@message.Body.ToString()</p>
+                                                        </a>
+                                                    </li>
+                                            <!-- end message -->
+                                                }
+
+                                            </ul>
+                                            <div class="slimScrollBar" style="width: 3px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px; background: rgb(0, 0, 0);"></div><div class="slimScrollRail" style="width: 3px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(51, 51, 51);"></div>
+                                        </div>
+                                    </li>
+                                    <li class="footer"><a href="#" onclick="showUsers()">See All Online Users</a></li>
+                                </ul>
+                            }
+                            else
+                            {
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-envelope-o"></i>
+                                    <span class="label label-success">0</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="header">You have 0 messages</li>
+                                    <li class="footer"><a href="#" onclick="showUsers()">View Online Users</a></li>
+                                </ul>
+                            }
+                        </li>
+                        <li class="dropdown messages-menu" title="Users Online">
+                            @if (onlineUsers.Any())
+                            {
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-users"></i>
+                                    <span class="label label-warning">@onlineUsers.Count</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="header">You have @onlineUsers.Count users online</li>
+                                    <li>
+                                        <!-- inner menu: contains the actual data -->
+                                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;">
+                                            <ul class="menu">
+                                                @foreach (var conUser in onlineUsers)
+                                                {
+                                                    <li>
+                                                        <!-- start message -->
+                                                        <a href="#" onclick="OpenPrivateChatWindow(chatHub,'@conUser.Id','@conUser.FirstName')">
+                                                            <div class="pull-left">
+                                                                <img src="@conUser.UserPhotoUrl.Replace("~","../..")" class="img-circle" alt="User Image">
+                                                            </div>
+                                                            <h4>
+                                                                @conUser.FirstName @conUser.LastName
+                                                                <small><i class="fa fa-clock-o"></i> @((DateTime.Now - conUser.LastOnline).TotalMinutes.ToString("F0")) mins</small>
+                                                            </h4>
+                                                        </a>
+                                                    </li>
+                                            <!-- end message -->
+                                                }
+
+                                            </ul>
+                                            <div class="slimScrollBar" style="width: 3px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px; background: rgb(0, 0, 0);"></div><div class="slimScrollRail" style="width: 3px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(51, 51, 51);"></div>
+                                        </div>
+                                    </li>
+                                    <li class="footer"><a href="#" onclick="showUsers()">See All Online Users</a></li>
+                                </ul>
+                            }
+                            else
+                            {
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-users"></i>
+                                    <span class="label label-success">0</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="header">You have 0 messages</li>
+                                    <li class="footer"><a href="#" onclick="showUsers()">View Online Users</a></li>
+                                </ul>
+                            }
+                        </li>
+                        @* BEGIN Notifications *@
+                        @if (faults.Any())
+                        {
+                            <li class="dropdown tasks-menu" title="List of Faults">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-flag-o"></i>
+                                    <span class="label label-danger">@faults.Count</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    @if (departmentManager != null)
+                                    {
+                                        <li class="header">You have @faults.Count reports assigned</li>
+                                        <li>
+                                            <ul class="menu">
+                                                @foreach (var fault in faults)
+                                                {
+                                                    <li>
+                                                        <a href="#" onclick="location.href='@Url.Action("DetailsForPublic","Faults",new { id = fault.FaultId })'">
+                                                            <i class="fa fa-clock-o text-aqua"></i> @fault.DateCreated.ToShortDateString() - @fault.Category.Name
+                                                        </a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </li>
+                                        <li class="footer"><a href="#" onclick="location.href='@Url.Action("PublicIndex","Faults",null)'">View all</a></li>
+                                    }
+                                    else if (organisationManager != null)
+                                    {
+                                        <li class="header">You have @faults.Count reports to assign</li>
+                                        <li>
+                                            <ul class="menu">
+                                                @foreach (var fault in faults)
+                                                {
+                                                    <li>
+                                                        <a href="#" onclick="location.href='@Url.Action("DetailsForPublic","Faults",new { id = fault.FaultId })'">
+                                                            <i class="fa fa-clock-o text-aqua"></i> @fault.DateCreated.ToShortDateString() - @fault.Category.Name
+                                                        </a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </li>
+                                        <li class="footer"><a href="#" onclick="location.href='@Url.Action("PublicIndex","Faults",null)'">View all</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li class="header">You have made @faults.Count reports</li>
+                                        <li>
+                                            <ul class="menu">
+                                                @foreach (var fault in faults)
+                                                {
+                                                    <li>
+                                                        <a href="#" onclick="location.href='@Url.Action("DetailsForPublic","Faults",new { id = fault.FaultId })'">
+                                                            <i class="fa fa-clock-o text-aqua"></i> @fault.DateCreated.ToShortDateString() - @fault.Category.Name
+                                                        </a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </li>
+                                        <li class="footer"><a href="#" onclick="location.href='@Url.Action("PublicIndex","Faults",null)'">View all</a></li>
+                                    }
+
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="dropdown tasks-menu" title="List of Faults">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-flag-o"></i>
+                                    <span class="label label-danger">0</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    @if (departmentManager != null)
+                                    {
+                                        <li class="header">You have managed no Reports</li>
+                                        <li>
+                                            <ul class="menu">
+                                                <li>
+                                                    @Html.ActionLink("Start Managing", "Management", "Organisations", null, null)
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
+                                    else if (organisationManager != null)
+                                    {
+                                        <li class="header">You have managed no Reports</li>
+                                        <li>
+                                            <ul class="menu">
+                                                <li>
+                                                    @Html.ActionLink("Start Managing", "Management", "Organisations", null, null)
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="header">You have no Reports</li>
+                                        <li>
+                                            <ul class="menu">
+                                                <li>
+                                                    @Html.ActionLink("Start Reporting", "ReportFault", "Faults", null, null)
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
+
+                                </ul>
+                            </li>
+                        }
+
+                        @* BEGIN User Account Menu *@
+                        @if (Request.IsAuthenticated)
+                        {
+                            @Html.AntiForgeryToken()
+                            if (role == "Organisation Manager")
+                            {
+                                <li class="dropdown user user-menu" title="User Options">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                        @if (user.UserPhotoUrl != null)
+                                        {
+                                            <img src="@user.UserPhotoUrl.Replace("~", "../.." )" class="user-image" alt="User Image" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/Content/uploads/profiles/DefaultManager.png" class="user-image" alt="User Image" />
+                                        }
+                                        <span class="hidden-xs">@Html.Label(user.FirstName) @Html.Label(user.LastName)</span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="user-header">
+                                            @if (user.UserPhotoUrl == null)
+                                            {
+                                                <img src="~/Content/uploads/profiles/DefaultManager.png" class="img-circle" alt="User Image" />
+                                            }
+                                            else
+                                            {
+                                                <img src="@user.UserPhotoUrl.Replace("~", "../..")" class="img-circle" alt="User Image">
+                                            }
+                                            <p>
+                                                @Html.Label(user.FirstName) @Html.Label(user.LastName) - @role
+                                            </p>
+                                        </li>
+                                        <li class="user-footer">
+                                            <div class="pull-left">
+                                                @Html.ActionLink("Profile", "Index", "Manage", null, new { @class = "btn btn-default btn-flat" })
+                                            </div>
+                                            <div class="pull-right">
+                                                <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-default btn-flat">Sign Out</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                            else if (role == "Department Manager")
+                            {
+                                <li class="dropdown user user-menu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                        @if (user.UserPhotoUrl != null)
+                                        {
+                                            <img src="@user.UserPhotoUrl.Replace("~", "../.." )" class="user-image" alt="User Image" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/Content/uploads/profiles/DefaultManager.png" class="user-image" alt="User Image" />
+                                        }
+                                        <span class="hidden-xs">@Html.Label(user.FirstName) @Html.Label(user.LastName)</span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="user-header">
+                                            @if (user.UserPhotoUrl == null)
+                                            {
+                                                <img src="~/Content/uploads/profiles/DefaultManager.png" class="img-circle" alt="User Image" />
+                                            }
+                                            else
+                                            {
+                                                <img src="@user.UserPhotoUrl.Replace("~", "../..")" class="img-circle" alt="User Image">
+                                            }
+                                            <p>
+                                                @Html.Label(user.FirstName) @Html.Label(user.LastName) - @role
+                                            </p>
+                                        </li>
+                                        <li class="user-footer">
+                                            <div class="pull-left">
+                                                @Html.ActionLink("Profile", "Index", "Manage", null, new { @class = "btn btn-default btn-flat" })
+                                            </div>
+                                            <div class="pull-right">
+                                                <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-default btn-flat">Sign Out</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+
+
+                            }
+                            else
+                            {
+                                <li class="dropdown user user-menu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                        <img src="@user.UserPhotoUrl.Replace("~", "../..")" class="user-image" alt="User Image">
+                                        <span class="hidden-xs">@Html.Label(user.FirstName) @Html.Label(user.LastName)</span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="user-header">
+                                            <img src="@user.UserPhotoUrl.Replace("~", "../..")" class="img-circle" alt="User Image">
+
+                                            <p>
+                                                @Html.Label(user.FirstName) @Html.Label(user.LastName) - @role
+                                            </p>
+                                        </li>
+                                        <li class="user-footer">
+                                            <div class="pull-left">
+                                                @Html.ActionLink("Profile", "Index", "Manage", null, new { @class = "btn btn-default btn-flat" })
+                                            </div>
+                                            <div class="pull-right">
+                                                <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-default btn-flat">Sign Out</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+
+                        }
+                        else
+                        {
+                            <li class="dropdown user user-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <span class="fa fa-sign-in"></span><span class="hidden-xs"> Sign In</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="user-header">
+                                        <span class="fa fa-5x fa-sign-in" style="color:#fff;"></span>
+                                        <p>
+                                            Sign up or Sign In To WeFix
+                                        </p>
+                                    </li>
+                                    <li class="user-footer">
+                                        <div class="pull-left">
+                                            @Html.ActionLink("Sign Up", "SignUp", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "btn btn-default btn-flat" })
+                                        </div>
+                                        <div class="pull-right">
+                                            @Html.ActionLink("Sign in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "btn btn-default btn-flat" })
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        }                       
+                        @* END User Account Menu *@
+                        @* BEGIN Control Sidebar Toggle Button *@
+                        @if (organisationManager != null || departmentManager != null)
+                        {
+                            <li>
+                                    <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                            </li>
+                                @* END Control Sidebar Toggle Button *@
+                        }
+                    </ul>
+                </div>
+            </nav>
+        </header>
+    }

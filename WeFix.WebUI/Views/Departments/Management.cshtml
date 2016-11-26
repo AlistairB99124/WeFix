@@ -1,0 +1,54 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Management";
+    Layout = "~/Views/Shared/_AdminLTELayout.cshtml";
+    var db = new WeFix.Domain.Context.EFDbContext();
+}
+@{ 
+    var userId = HttpContext.Current.User.Identity.GetUserId();
+    var manager = (from x in db.DepartmentManagers where x.UserId == userId select x).FirstOrDefault();
+    IEnumerable<WeFix.Domain.Entities.Fault> resolvedFaults = (from x in db.Faults where x.ManagerId == manager.DepartmentManagerId && x.Resolved select x).ToList();
+    IEnumerable<WeFix.Domain.Entities.Fault> unresolvedFaults = (from x in db.Faults where x.ManagerId == manager.DepartmentManagerId && !x.Resolved select x).ToList();
+}
+<h2>Assignments</h2>
+<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+    <li role="presentation" class="active"><a href="#Unresolved" id="UnresolvedTab" data-toggle="tab">Unresolved</a></li>
+    <li role="presentation"><a href="#Resolved" data-toggle="tab" id="ResolvedTab">Resolved</a></li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane active in fade" id="Unresolved">
+        <div class="panel">
+            <div class="panel-body">
+                @if (!unresolvedFaults.Any())
+                {
+                    <p>You have no unresolved faults outstanding</p>
+                }
+                else
+                {
+                    <div>
+                        @Html.Partial("../Faults/DeptIndex", unresolvedFaults)
+                    </div>
+                    
+                }
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="Resolved">
+        <div class="panel">
+            <div class="panel-body">
+                @if (!resolvedFaults.Any())
+                {
+                    <p>You have no Resolved faults</p>
+                }
+                else
+                {
+                    <div>
+                        @Html.Partial("../Faults/DeptIndex", resolvedFaults)
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+

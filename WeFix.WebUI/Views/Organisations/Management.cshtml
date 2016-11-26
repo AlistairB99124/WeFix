@@ -1,0 +1,367 @@
+﻿
+@{
+    ViewBag.Title = "Management";
+    Layout = "~/Views/Shared/_AdminLTELayout.cshtml";
+}
+@using Microsoft.AspNet.Identity
+@using WeFix.Domain.Entities
+@using WeFix.Domain.Context;
+@{
+    var selectDept = ViewBag.SelectDept as SelectList;
+    var selectDepartment = ViewBag.SelectDepartment as SelectList;
+    var OrgFaultsUR = ViewBag.OrgFaultsUR as IEnumerable<Fault>;
+    var OrgFaultsR = ViewBag.OrgFaultsR as IEnumerable<Fault>;
+    var AllDept = ViewBag.AllDept as IEnumerable<Department>;
+    var OrgsManagers = ViewBag.OrgsManagers as IEnumerable<DepartmentManager>;
+    var selectCountry = ViewBag.CountrySelect as SelectList;
+    var selectCountryCode = ViewBag.CountryCodeSelect as SelectList;
+    var CategorySelect = ViewBag.CategorySelect as SelectList;
+    var org = ViewBag.Org as Organisation;
+}
+<div>
+    <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+        <li role="presentation" class="active"><a href="#Departments" id="LocationTab" data-toggle="tab">Departments</a></li>
+        <li role="presentation"><a href="#DepartmentManagers" data-toggle="tab" id="CategoryTab">Department Managers</a></li>
+        <li role="presentation"><a href="#Faults" data-toggle="tab" id="SeverityTab">Faults</a></li>
+    </ul>
+</div>
+<div id="my-tab-content" class="tab-content">
+    <div class="tab-pane fade in active" id="Departments">
+        <div class="well" id="indexDepartment">
+            @if (!AllDept.Any())
+            {
+                <p style="color:#333">You do not have any Departments yet. <a href="#" onclick="CreateDepartment()">Add a Department</a></p>
+            }
+            else
+            {
+                <aside>
+                    @Html.Partial("../Departments/Index", AllDept)
+                </aside>
+            }
+        </div>
+        <div class="hidden" id="createDepartment">
+            @model WeFix.WebUI.Models.DashboardViewModel
+            <aside style="color:#333">
+                @using (Html.BeginForm("Create", "Departments", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                <div class="box box-default">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Add A New Department</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                            <button type="button" onclick="ShowDepartmentList()" class="btn btn-box-tool"><i class="fa fa-remove"></i></button>
+                        </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                
+                                <!-- /.form-group -->
+                                <div class="form-group">
+                                    <label>Address Line 1</label>
+                                    @Html.EditorFor(model => model.AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label>Address Line 2</label>
+                                    @Html.EditorFor(model => model.AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label>City</label>
+                                    @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label>Country</label>
+                                    @Html.DropDownListFor(model => model.Country, selectCountry, new { @class = "form-control", @style = "width:100%" })
+                                    @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label>Postal Code</label>
+                                    @Html.EditorFor(model => model.PostalCode, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.PostalCode, "", new { @class = "text-danger" })
+                                </div>
+                                </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Category</label>
+                                    @Html.DropDownListFor(model => model.CategoryId, CategorySelect, new { @class = "form-control", @style="width:100%" })
+                                    @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                                    <input type="hidden" name="CategoryResult" id="CategoryResult"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Department Name</label>
+                                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label>Organisation</label>   
+                                    <input type="text" class="form-control" value="@org.Name" readonly="readonly" disabled="disabled"/>                                  
+                                        <input type="hidden" name="OrgId" value="@org.OrganisationId" />                                    
+                                </div>
+                                <div class="form-group">
+                                    <label>Jurisdiction</label>
+                                    <input type="number" min="1" step="0.1" data-number-to-fixed="2" data-number-stepfactor="100" class="form-control" id="c1" name="jurisdiction" style="text-align: right; padding-right: 15px; color:#333; width:100%" />
+
+                                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label>Please ensure the information is accurate!</label>
+                                        <input type="submit" value="Create" class="btn btn-success btn-flat btn-block" />
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <!-- /.col -->                         
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                       
+                    </div>
+                </div>
+                <!-- /.box -->
+                }
+            </aside>          
+        </div>
+    </div>
+    <div class="tab-pane fade" id="DepartmentManagers">
+        <div class="well">
+            <aside id="indexDeptMan">
+                @if (!OrgsManagers.Any())
+                {
+                    <p style="color:#333">You do not have any Department Managers yet. <a href="#" onclick="CreateDepartmentManager();">Add a Department Manager</a></p>
+                }
+                else
+                {
+                    <aside>
+                        @Html.Partial("../DepartmentManagers/Index", OrgsManagers)
+                    </aside>
+                }
+            </aside>
+            <aside class="hidden" id="createDeptMan" style="color:#333;">
+                @using (Html.BeginForm("CreateWithUser", "DepartmentManagers", FormMethod.Post))
+                {
+                @Html.AntiForgeryToken()
+                <div class="box box-default">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Add A New Department Manager</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                            <button type="button" onclick="ShowDeptManagerList()" class="btn btn-box-tool"><i class="fa fa-remove"></i></button>
+                        </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+
+                                <!-- /.form-group -->
+                                <div class="form-group">
+                                    <label>Department</label>
+                                    @if (AllDept.Any())
+                                    {
+                                        @Html.DropDownListFor(model => model.DepartmentId, selectDepartment, new { @class = "form-control", @style = "width:100%" })
+                                        @Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "text-danger" })
+                                    }                                   
+                                </div>
+                                <div class="form-group">
+                                    <label>Position</label>
+                                        @Html.EditorFor(model => model.Position, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Position, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                                </div>
+                                <div class="form-group">
+                                    <label>Cell Phone</label>
+                                    <table style="width:100%">
+                                        <tr style="width:100%;">
+                                            <td style="width:30%">
+                                                @Html.DropDownList("CountryCode", selectCountryCode, htmlAttributes: new { @class = "form-control", @style = "padding:0;" })
+                                            </td>
+                                            <td style="width:10%">
+                                                <input type="text" style="padding:0px; text-align:center;" value="(0)" readonly="readonly" disabled="disabled" class="form-control" />
+                                            </td>
+                                            <td style="width:60%">
+                                                @Html.TextBoxFor(m => m.Cell, new { @class = "form-control" })
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Profile Picture</label>
+                                        <div class="input-group">
+                                            <label class="input-group-btn">
+                                                <span class="btn btn-primary btn-block btn-flat">
+                                                    Browse… <input type="file" style="display:none" name="UserPhoto" onchange="displayName()" id="fileUpload" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                                                </span>
+                                            </label>
+                                            <input type="text" class="form-control" id="uploadText" readonly="" placeholder="Upload Profile Image">
+                                        </div>
+                                        <input type="hidden" id="base64" name="base64" />                                  
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                                </div>
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm Password</label>
+                                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                                </div>
+                                <div class="form-group">
+                                        <label>Please ensure the information is accurate!</label>
+                                        <input type="submit" class="btn btn-success btn-flat btn-block" value="Register" />                                   
+                                        
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                }
+</aside>
+
+        </div>        
+    </div>
+    <div class="tab-pane fade" id="Faults">
+                <ul id="faultTabs" class="nav nav-tabs" data-tabs="tabs">
+                    <li role="presentation" class="active"><a href="#Unresolved" id="LocationTab" data-toggle="tab">Unresolved</a></li>
+                    <li role="presentation"><a href="#Resolved" data-toggle="tab" id="CategoryTab">Resolved</a></li>
+
+                </ul>
+            <div id="faults-tab-content" class="tab-content" style="padding-left:0px;padding-right:0px;">
+                <div class="tab-pane fade in active well" id="Unresolved">                    
+                    @if (!OrgFaultsUR.Any())
+                    {
+                        <p style="color:#333">You have no unresolved faults outstanding</p>
+                    }
+                    else
+                    {
+                        <aside>
+                            @Html.Partial("../Faults/OrgIndex", OrgFaultsUR)
+                        </aside>
+                    }
+                </div>
+                <div class="tab-pane fade well" id="Resolved">
+                    @if (!OrgFaultsR.Any())
+                    {
+                        <p style="color:#333">You have no resolved faults</p>
+                    }
+                    else
+                    {
+                        <aside>
+                            @Html.Partial("../Faults/OrgIndex", OrgFaultsR)
+                        </aside>
+                    }
+                </div>
+            </div>
+        </div>
+</div>
+    <script type="text/javascript">
+        function EL(id) { return document.getElementById(id); } // Get el by ID helper function
+
+        function readFile() {
+            if (this.files && this.files[0]) {
+                var FR = new FileReader();
+                FR.onload = function (e) {
+                    EL("base64").value = e.target.result;
+                };
+                FR.readAsDataURL(this.files[0]);
+            }
+        }       
+
+        EL("fileUpload").addEventListener("change", readFile, false);
+
+        function displayName() {
+            var x = document.getElementById("fileUpload");
+            var txt = "";
+            if ('files' in x) {
+                if (x.files.length == 0) {
+                    txt = "Select one or more files.";
+                } else {
+                    for (var i = 0; i < x.files.length; i++) {
+                        var file = x.files[i];
+                        if ('name' in file) {
+                            txt += file.name;
+                        }
+                        if ('size' in file) {
+                            txt += " [" + file.size + "]";
+                        }
+                    }
+                }
+            }
+            document.getElementById("uploadText").value = txt;
+        }
+
+        var createDepartment = document.getElementById('createDepartment');
+        var indexDepartment = document.getElementById('indexDepartment');
+        var deleteDepartment = document.getElementById('DeleteDepartment');
+        var deleteId = document.getElementById('deleteId');
+
+        function CreateDepartment() {
+            indexDepartment.setAttribute("class", "hidden");
+            createDepartment.setAttribute("class", "well");
+        }
+
+        function SelectCategory() {
+            var result = document.getElementById('CategoryResult');
+            var select = document.getElementById('CategoryList');
+            var r = select.options[select.selectedIndex].value;
+            result.value = r;
+        }
+        var createDepartmentManager = document.getElementById('createDeptMan');
+        var indexDepartmentManager = document.getElementById('indexDeptMan');
+        var ManagerUserId = document.getElementById('ManagerUserId');
+
+        function SelectUser() {
+            var userSelect = document.getElementById('userSelect');
+            ManagerUserId.value = userSelect.options[userSelect.selectedIndex].value;
+        }
+
+        function CreateDepartmentManager() {
+            indexDepartmentManager.setAttribute("class", "hidden");
+            createDepartmentManager.setAttribute("class", "well");
+        }
+        function ShowDeptManagerList() {
+            createDepartmentManager.setAttribute("class", "hidden");
+            indexDepartmentManager.setAttribute("class", "well");
+        }
+
+        function SelectDepartment() {
+            var deptSelect = document.getElementById('selectDepartment');
+            var deptResult = document.getElementById('deptId');
+            var rd = deptSelect.options[deptSelect.selectedIndex].value;
+            deptResult.value = rd;
+        }
+        var createDepartment = document.getElementById('createDepartment');
+        var indexDepartment = document.getElementById('indexDepartment');
+
+        function CreateDepartment() {
+            indexDepartment.setAttribute("class", "hidden");
+            createDepartment.setAttribute("class", "well");
+        }
+
+        function ShowDepartmentList() {
+            indexDepartment.setAttribute("class", "well");
+            createDepartment.setAttribute("class", "hidden");
+        }
+    </script>    

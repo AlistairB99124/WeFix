@@ -1,0 +1,1387 @@
+﻿@model WeFix.WebUI.Models.IndexViewModel
+@{
+    ViewBag.Title = "Profile";
+}
+@using System;
+@using System.Collections.Generic;
+@using System.Data;
+@using System.Linq;
+@using System.Net;
+@using System.Text;
+@using System.Web;
+@using System.Web.Mvc;
+@using WeFix.Logic;
+@using System.Data.Entity;
+@using WeFix.Domain.Context
+@using WeFix.Domain.Entities
+@using Microsoft.AspNet.Identity
+@{
+    var userId = HttpContext.Current.User.Identity.GetUserId();
+    var db = new EFDbContext();
+    var user = db.Users.Find(userId);
+    string role = string.Empty;
+    Organisation organisation = null;
+    Department department = null;
+    int countFaults = 0;
+    Fault mostCommon = null;
+    List<Fault> faults = null;
+    List<Fault> allFaults = null;
+    Category mostCommonCategory = null;
+    var organisationManager = (from x in db.OrganisationManagers where x.UserId == userId select x).FirstOrDefault();
+    var departmentManager = (from x in db.DepartmentManagers where x.UserId == userId select x).FirstOrDefault();
+    var publicUser = (from x in db.PublicUsers where x.UserId == userId select x).FirstOrDefault();
+    if (organisationManager != null)
+    {
+        role = "Organisation Manager";
+        organisation = (from x in db.Organisations where x.OrganisationId == organisationManager.OrganisationId select x).FirstOrDefault();
+        faults = new List<Fault>();
+        faults = new List<Fault>();
+        var orgFaults = db.Faults.ToList();
+        var orgDepartments = (from x in db.Departments where x.OrganisationId == organisation.OrganisationId select x).ToList();
+        foreach (var f in orgFaults)
+        {
+            foreach (var d in orgDepartments)
+            {
+                if (f.CategoryId == d.CategoryId)
+                {
+                    faults.Add(f);
+                }
+            }
+        }
+        allFaults = faults;
+        if (faults.Count != 0)
+        {
+            countFaults = faults.Count();
+            mostCommon = faults.GroupBy(i => i).OrderByDescending(grp => grp.Count()).Select(grp => grp.Key).First();
+            mostCommonCategory = db.Categories.Find(mostCommon.CategoryId);
+        }
+    }
+    else if (departmentManager != null)
+    {
+        role = "Department Manager";
+        department = (from x in db.Departments where x.DepartmentId == departmentManager.DepartmentId select x).FirstOrDefault();
+        organisation = (from x in db.Organisations where x.OrganisationId == department.OrganisationId select x).FirstOrDefault();
+        faults = (from x in db.Faults where x.ManagerId == departmentManager.DepartmentManagerId select x).ToList();
+
+        allFaults = (from x in db.Faults where x.ManagerId == departmentManager.DepartmentManagerId select x).ToList();
+        if (faults.Count != 0)
+        {
+            mostCommon = faults.GroupBy(i => i).OrderByDescending(grp => grp.Count()).Select(grp => grp.Key).First();
+            mostCommonCategory = db.Categories.Find(mostCommon.CategoryId);
+            countFaults = faults.Count;
+        }
+
+    }
+    else
+    {
+        role = "Public User";
+        faults = (from x in db.Faults where x.PublicUserId == publicUser.PublicUserId select x).ToList();
+        allFaults = (from x in db.Faults where x.PublicUserId == publicUser.PublicUserId select x).ToList();
+        if (faults.Count != 0)
+        {
+            countFaults = faults.Count();
+            mostCommon = faults.GroupBy(i => i).OrderByDescending(grp => grp.Count()).Select(grp => grp.Key).First();
+            mostCommonCategory = db.Categories.Find(mostCommon.CategoryId);
+        }
+    }
+}
+
+<!-- Main content -->
+<section style="position:relative;z-index:5;padding-left:25px;padding-right:25px;padding-top:15px;">
+
+    <div class="row">
+        <div class="col-md-3">
+
+            <!-- Profile Image -->
+            <div class="box box-primary">
+                <div class="box-body box-profile"> 
+                    @using (Html.BeginForm("UodateImage", "Manage", FormMethod.Post,new { @style="width:100px;", @class="center-block" }))
+                    {
+                        if (user.UserPhotoUrl == null)
+                        {
+                            <label for="imageUpload">
+                                <img id="user-img" class="img-responsive img-circle profile-user-img" src="~/Content/uploads/profiles/DefaultUser.png"  alt="User Profile Picture" />
+                                <input type="file" id="imageUpload" name="imageUpload" class="hidden" />
+                            </label>
+                        }
+                        else
+                        {
+                            @*<img class="profile-user-img img-responsive img-circle" src="@user.UserPhotoUrl.Replace("~", "../..")" alt="User Profile Picture" />*@
+                            <label for="imageUpload" id="profile-image">
+                                <img id="user-img" class="img-responsive img-circle profile-user-img" src="@user.UserPhotoUrl.Replace("~","../..")" alt="User Profile Picture" />
+                                <input type="file" id="imageUpload" name="imageUpload" class="hidden"/>
+                            </label>
+                            
+                        }
+                        <input type="hidden" name="base64" id="base64"/>
+                        <button type="submit" class="hidden" id="saveBtn">Save</button>
+                    }                 
+                                                         
+                    <h3 style="color:#222" class="profile-username text-center">@(user.FirstName + " " + user.LastName)</h3>
+                    <p class="text-muted text-center">@role</p>
+                    @if (role == "Department Manager")
+                    {
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <b>Organisation</b> <a class="pull-right">@organisation.Name</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Department</b> <a class="pull-right">@department.Name</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Position</b> <p class="pull-right">@departmentManager.Position</p>
+                            </li>
+                        </ul>
+                    }
+                    else if (role == "Organisation Manager")
+                    {
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <b>Organisation</b> <a class="pull-right">@organisation.Name</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Position</b> <p class="pull-right">@organisationManager.Position</p>
+                            </li>
+                        </ul>
+                    }
+
+                    <a href="#" class="btn btn-guardian btn-block"><b>Follow</b></a>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+            <!-- About Me Box -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">About Me</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <strong><i class="fa fa-pencil margin-r-5"></i> Number of Reports Made</strong>
+                    <p style="text-align:center;" class="text-muted">
+                        @countFaults
+                    </p>
+                    <hr>
+                    <strong><i class="fa fa-tag margin-r-5"></i> Most Common Fault Category</strong>
+                    @if (faults.Count != 0)
+                    {<p style="text-align:center;" class="text-muted"> @mostCommonCategory.Name</p>}
+                    <hr>
+                    <strong><i class="fa fa-map-marker margin-r-5"></i> Top Locations</strong>
+                    <p style="text-align:center;">
+                        <span class="label label-danger">Airlie</span>
+                        <span class="label label-success">Nova Constantia</span>
+                        <span class="label label-info">Tokai</span>
+                        <span class="label label-warning">Kirstenhoff</span>
+                        <span class="label label-primary">Mitchell's Plain</span>
+                    </p>
+                    <hr>
+                    <strong><i class="fa fa-file-text-o margin-r-5"></i> Notes</strong>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fermentum enim neque.</p>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-9">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#activity" data-toggle="tab">Activity</a></li>
+                    <li><a href="#timeline" data-toggle="tab">News</a></li>
+                    <li><a href="#settings" data-toggle="tab">Settings</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="active tab-pane" id="activity">
+                        @{ var faultsToDump1 = new List<Fault>();
+                            var faultsToDump2 = new List<Fault>();
+                            var faultsToDump3 = new List<Fault>();
+                            var faultsToDump4 = new List<Fault>();
+                        }
+                        <!-- Posts -->
+                        @if (faults.Count != 0)
+                        {
+                            <div id="page1">
+                            @foreach (var fault in faults.OrderByDescending(x => x.DateCreated).Take(4))
+                            {
+                                faultsToDump1.Add(fault);
+                                <div class="post">
+                                    <div class="user-block">
+                                        @{var deptMan = (from x in db.DepartmentManagers where x.DepartmentManagerId == fault.ManagerId select x).FirstOrDefault();
+                                            User managerUser = null;
+                                            if (deptMan != null)
+                                            {
+                                                managerUser = db.Users.Find(deptMan.UserId);
+                                            }
+                                        }
+                                        @if (deptMan == null)
+                                        {
+                                            var comments = (from x in db.Comments where x.FaultId == fault.FaultId select x).ToList();
+                                            <img class="img-circle img-bordered-sm" src="../../Content/uploads/profiles/DefaultManager.png" alt="user image">
+                                            <span class="username">
+                                                <a href="#">Unassigned</a>
+                                                <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                                            </span>
+                                            <span class="description">Report Lodged - @fault.DateCreated</span>
+                                            <p>@fault.Description</p>
+                                            <ul class="list-inline">
+                                                <li>
+                                                    <a href="#" onclick="showComments(@fault.FaultId);">
+                                                        <i class="fa fa-comments-o margin-r-5"></i> Comments
+                                                        (@comments.Count)
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                            if (comments.Count != 0)
+                                            {
+                                                <ul id="@("commentList" + fault.FaultId)" class="hidden">
+                                                    @foreach (var comment in comments)
+                                                    {
+                                                        <li class="media">
+                                                            <div class="media-left">
+                                                                <a href="#">
+                                                                                @{ var userFault = (from x in db.Faults where x.FaultId == comment.FaultId select x).FirstOrDefault();
+                                                                                    var pUser = db.PublicUsers.Find(userFault.PublicUserId);
+                                                                                    var mUser = db.DepartmentManagers.Find(userFault.ManagerId);
+                                                                                    User commenter = null;
+                                                                                    if (pUser != null)
+                                                                                    {
+                                                                                        commenter = db.Users.Find(pUser.UserId);
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        commenter = db.Users.Find(mUser.UserId);
+                                                                                    }
+                                                                                }
+                                                                                        <img class="media-object" src="@commenter.UserPhotoUrl.Replace("~", "../..")" alt="@commenter.FirstName" width="35" height="35">
+                                                                                    </a>
+                                                                                </div>
+                                                                                <div class="media-body">
+                                                                                    <h4 class="media-heading">@(commenter.FirstName + " " + commenter.LastName)</h4>
+                                                                                    @comment.Text
+                                                                                </div>
+                                                                            </li>
+                                                                                    }
+                                                                            <li>
+                                                                                <a href="#" onclick="collapseComments(@fault.FaultId);">
+                                                                                    <i class="fa fa-caret-up"></i>Hide Comments
+                                                                                </a>
+                                                                            </li>
+                                                                        </ul>
+                                                                                    }
+                                                                                    using (Html.BeginForm("MakeComment", "Faults", FormMethod.Post, new { @id = "commentForm" }))
+                                                                                    {
+                                                <div class="form-group has-feedback">
+                                                                                <div class="input-group">
+                                                                                    <div type="submit" id="submitComment" class="input-group-btn">
+                                                                                        <button type="submit" class="btn btn-primary btn-block btn-flat">
+                                                                                            Comment
+                                                                                        </button>
+                                                                                    </div>
+                                                                                    <input class="form-control input-sm" type="text" name="CommentText" placeholder="Type a comment" />
+                                                                                </div>
+                                                                            </div>
+                                                <input class="hidden" value="@fault.FaultId" name="faultId" />
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        if (managerUser.UserPhotoUrl != "")
+                                                                                        {
+                                                <img class="img-circle img-bordered-sm" src="@managerUser.UserPhotoUrl.Replace("~", "../..")" alt="user image">
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                <img class="img-circle img-bordered-sm" src="../../Content/uploads/profiles/DefaultManager.png" alt="user image">
+                                                                                        }
+                                                                                        var comments = (from x in db.Comments where x.FaultId == fault.FaultId select x).ToList();
+                                                <span class="username">
+                                                    <a href="#">@(managerUser.FirstName + " " + managerUser.LastName)</a>
+                                                    <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                                                </span>
+                                                <span class="description">Report Lodged - @fault.DateCreated</span>                                            
+                                                <p>@fault.Description</p>
+                                                <ul class="list-inline" id="commentShowList">
+                                                    <li>
+                                                        <a href="#" onclick="showComments(@fault.FaultId);">
+                                                                <i class="fa fa-comments-o margin-r-5"></i> Comments (@comments.Count)
+                                                        </a>
+                                                    </li>
+                                                    </ul>
+                                                                                        if (comments.Count != 0)
+                                                                                        {
+                                                    <ul id="@("commentList" + fault.FaultId)" class="hidden">
+                                                    @foreach (var comment in comments)
+                                                    {
+                                                        <li class="media">
+                                                            <div class="media-left">
+                                                                    <a href="#">
+                                                                    @{ var userFault = (from x in db.Faults where x.FaultId == comment.FaultId select x).FirstOrDefault();
+                                                                        var pUser = db.PublicUsers.Find(userFault.PublicUserId);
+                                                                        var mUser = db.DepartmentManagers.Find(userFault.ManagerId);
+                                                                        User commenter = null;
+                                                                        if (pUser != null)
+                                                                        {
+                                                                            commenter = db.Users.Find(pUser.UserId);
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            commenter = db.Users.Find(mUser.UserId);
+                                                                        }
+                                                                    }
+                                                                        <img class="media-object" src="@commenter.UserPhotoUrl.Replace("~", "../..")" alt="@commenter.FirstName" width="35" height="35">
+                                                                    </a>
+                                                            </div>
+                                                            <div class="media-body">
+                                                                <h4 class="media-heading">@(commenter.FirstName + " " + commenter.LastName)</h4>
+                                                                                            @comment.Text
+                                                            </div>
+                                                        </li>
+                                                                        }   
+                                                        <li>
+                                                                <a href="#" onclick="collapseComments(@fault.FaultId);">
+                                                                    <i class="fa fa-caret-up"></i>Hide Comments
+                                                                </a>
+                                                            
+                                                        </li>                                                     
+                                                    </ul>
+                                                                        }
+                                                                        using (Html.BeginForm("MakeComment", "Faults", FormMethod.Post, new { @id = "commentForm" }))
+                                                                        {
+                                                                            <div class="form-group has-feedback">
+                                                                                <div class="input-group">
+                                                                                    <div type="submit" id="submitComment" class="input-group-btn">
+                                                                                        <button type="submit" class="btn btn-primary btn-block btn-flat">
+                                                                                            Comment
+                                                                                        </button>
+                                                                                    </div>
+                                                                                    <input class="form-control input-sm" type="text" name="CommentText" placeholder="Type a comment" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <input class="hidden" value="@fault.FaultId" name="faultId"/>
+                                                                            }
+
+                                                                        }
+
+                                                        </div>
+                                                    </div>
+
+                                                }
+                                </div>
+                                                if (faultsToDump1.Any())
+                                                {
+
+                                            foreach (var f in faultsToDump1)
+                                            {
+                                            faults.Remove(f);
+                                        }
+                                         <div id="page2" class="hidden">
+                                         @foreach (var fault in faults.OrderByDescending(x => x.DateCreated).Take(4))
+                                         {
+                                             faultsToDump2.Add(fault);
+                                            <div class="post">
+                                                <div class="user-block">
+                                                    @{var deptMan = (from x in db.DepartmentManagers where x.DepartmentManagerId == fault.ManagerId select x).FirstOrDefault();
+                                                        User managerUser = null;
+                                                        if (deptMan != null)
+                                                        {
+                                                            managerUser = db.Users.Find(deptMan.UserId);
+                                                        }
+                                                    }
+                                                    @if (deptMan == null)
+                                                    {
+                                                        var comments = (from x in db.Comments where x.FaultId == fault.FaultId select x).ToList();
+                                                        <img class="img-circle img-bordered-sm" src="../../Content/uploads/profiles/DefaultManager.png" alt="user image">
+                                                        <span class="username">
+                                                            <a href="#">Unassigned</a>
+                                                            <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                                                        </span>
+                                                        <span class="description">Report Lodged - @fault.DateCreated</span>
+                                                        <p>@fault.Description</p>
+                                                        <ul class="list-inline">
+                                                            <li>
+                                                                <a href="#" onclick="showComments(@fault.FaultId);">
+                                                                    <i class="fa fa-comments-o margin-r-5"></i> Comments
+                                                                    (@comments.Count)
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                        if (comments.Count != 0)
+                                                        {
+                                                            <ul id="@("commentList" + fault.FaultId)" class="hidden">
+                                                                @foreach (var comment in comments)
+                                                                {
+                                                                    <li class="media">
+                                                                        <div class="media-left">
+                                                                            <a href="#">
+                                                                                @{ var userFault = (from x in db.Faults where x.FaultId == comment.FaultId select x).FirstOrDefault();
+                                                                                    var pUser = db.PublicUsers.Find(userFault.PublicUserId);
+                                                                                    var mUser = db.DepartmentManagers.Find(userFault.ManagerId);
+                                                                                    User commenter = null;
+                                                                                    if (pUser != null)
+                                                                                    {
+                                                                                        commenter = db.Users.Find(pUser.UserId);
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        commenter = db.Users.Find(mUser.UserId);
+                                                                                    }
+                                                                                }
+                                                                                <img class="media-object" src="@commenter.UserPhotoUrl.Replace("~", "../..")" alt="@commenter.FirstName" width="35" height="35">
+                                                                            </a>
+                                                                        </div>
+                                                                        <div class="media-body">
+                                                                            <h4 class="media-heading">@(commenter.FirstName + " " + commenter.LastName)</h4>
+                                                                            @comment.Text
+                                                                        </div>
+                                                                    </li>
+                                                                                    }
+                                                                <li>
+                                                                    <a href="#" onclick="collapseComments(@fault.FaultId);">
+                                                                        <i class="fa fa-caret-up"></i>Hide Comments
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                                                    }
+
+                                                                                    using (Html.BeginForm("MakeComment", "Faults", FormMethod.Post, new { @id = "commentForm" }))
+                                                                                    {
+                                                                                        <div class="form-group has-feedback">
+                                                                                            <div class="input-group">
+                                                                                                <div type="submit" id="submitComment" class="input-group-btn">
+                                                                                                    <button type="submit" class="btn btn-primary btn-block btn-flat">
+                                                                                                        Comment
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                                <input class="form-control input-sm" type="text" name="CommentText" placeholder="Type a comment" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <input class="hidden" value="@fault.FaultId" name="faultId" />
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        if (managerUser.UserPhotoUrl != "")
+                                                                                        {
+                                                                                            <img class="img-circle img-bordered-sm" src="@managerUser.UserPhotoUrl.Replace("~", "../..")" alt="user image">
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <img class="img-circle img-bordered-sm" src="../../Content/uploads/profiles/DefaultManager.png" alt="user image">
+                                                                                        }
+                                                                                        var comments = (from x in db.Comments where x.FaultId == fault.FaultId select x).ToList();
+                                                                                        <span class="username">
+                                                                                            <a href="#">@(managerUser.FirstName + " " + managerUser.LastName)</a>
+                                                                                            <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                                                                                        </span>
+                                                                                        <span class="description">Report Lodged - @fault.DateCreated</span>
+                                                                                        <p>@fault.Description</p>
+                                                                                        <ul class="list-inline">
+                                                                                            <li>
+                                                                                                <a href="#" onclick="showComments(@fault.FaultId);">
+                                                                                                    <i class="fa fa-comments-o margin-r-5"></i> Comments
+                                                                                                    (@comments.Count)
+                                                                                                </a>
+                                                                                            </li>
+                                                                                        </ul>
+
+                                                                                        if (comments.Count != 0)
+                                                                                        {
+                                                                                            <ul id="@("commentList" + fault.FaultId)" class="hidden">
+                                                                                                @foreach (var comment in comments)
+                                                                                                {
+                                                                                                    <li class="media">
+                                                                                                        <div class="media-left">
+                                                                                                            <a href="#">
+                                                                                                                @{ var userFault = (from x in db.Faults where x.FaultId == comment.FaultId select x).FirstOrDefault();
+                                                                                                                    var pUser = db.PublicUsers.Find(userFault.PublicUserId);
+                                                                                                                    var mUser = db.DepartmentManagers.Find(userFault.ManagerId);
+                                                                                                                    User commenter = null;
+                                                                                                                    if (pUser != null)
+                                                                                                                    {
+                                                                                                                        commenter = db.Users.Find(pUser.UserId);
+                                                                                                                    }
+                                                                                                                    else
+                                                                                                                    {
+                                                                                                                        commenter = db.Users.Find(mUser.UserId);
+                                                                                                                    }
+                                                                                                                }
+                                                                                                                <img class="media-object" src="@commenter.UserPhotoUrl.Replace("~", "../..")" alt="@commenter.FirstName" width="35" height="35">
+                                                                                                            </a>
+                                                                                                        </div>
+                                                                                                        <div class="media-body">
+                                                                                                            <h4 class="media-heading">@(commenter.FirstName + " " + commenter.LastName)</h4>
+                                                                                                            @comment.Text
+                                                                                                        </div>
+                                                                                                    </li>
+                                                                                                                    }
+                                                                                                <li>
+                                                                                                    <a href="#" onclick="collapseComments(@fault.FaultId);">
+                                                                                                        <i class="fa fa-caret-up"></i>Hide Comments
+                                                                                                    </a>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                                                    }
+                                                                                                                    using (Html.BeginForm("MakeComment", "Faults", FormMethod.Post, new { @id = "commentForm" }))
+                                                                                                                    {
+                                                                                                                        <div class="form-group has-feedback">
+                                                                                                                            <div class="input-group">
+                                                                                                                                <div type="submit" id="submitComment" class="input-group-btn">
+                                                                                                                                    <button type="submit" class="btn btn-primary btn-block btn-flat">
+                                                                                                                                        Comment
+                                                                                                                                    </button>
+                                                                                                                                </div>
+                                                                                                                                <input class="form-control input-sm" type="text" name="CommentText" placeholder="Type a comment" />
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                        <input class="hidden" value="@fault.FaultId" name="faultId" />
+                                                                                                                        }
+
+                                                                                                                    }
+
+                                                </div>
+                                            </div>
+
+                                                                                                                    }
+                                             </div>
+                                    }
+                                        if (faultsToDump2.Any())
+                                        {
+                                            foreach (var f in faultsToDump2)
+                                            {
+                                                faults.Remove(f);
+                                            }
+                                                            <div id="page3" class="hidden">
+                                                            @foreach (var fault in faults.OrderByDescending(x => x.DateCreated).Take(4))
+                                                            {
+                                                                faultsToDump3.Add(fault);
+                                                                <div class="post">
+                                                                    <div class="user-block">
+                                                                        @{var deptMan = (from x in db.DepartmentManagers where x.DepartmentManagerId == fault.ManagerId select x).FirstOrDefault();
+                                                                            User managerUser = null;
+                                                                            if (deptMan != null)
+                                                                            {
+                                                                                managerUser = db.Users.Find(deptMan.UserId);
+                                                                            }
+                                                                        }
+                                                                        @if (deptMan == null)
+                                                                        {
+                                                                            var comments = (from x in db.Comments where x.FaultId == fault.FaultId select x).ToList();
+                                                                            <img class="img-circle img-bordered-sm" src="../../Content/uploads/profiles/DefaultManager.png" alt="user image">
+                                                                            <span class="username">
+                                                                                <a href="#">Unassigned</a>
+                                                                                <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                                                                            </span>
+                                                                            <span class="description">Report Lodged - @fault.DateCreated</span>
+                                                                            <p>@fault.Description</p>
+                                                                            <ul class="list-inline">
+                                                                                <li>
+                                                                                    <a href="#" onclick="showComments(@fault.FaultId);">
+                                                                                        <i class="fa fa-comments-o margin-r-5"></i> Comments
+                                                                                        (@comments.Count)
+                                                                                    </a>
+                                                                                </li>
+                                                                            </ul>
+                                                                            if (comments.Count != 0)
+                                                                            {
+                                                                                <ul id="@("commentList" + fault.FaultId)" class="hidden">
+                                                                                    @foreach (var comment in comments)
+                                                                                    {
+                                                                                        <li class="media">
+                                                                                            <div class="media-left">
+                                                                                                <a href="#">
+                                                                                                    @{ var userFault = (from x in db.Faults where x.FaultId == comment.FaultId select x).FirstOrDefault();
+                                                                                                        var pUser = db.PublicUsers.Find(userFault.PublicUserId);
+                                                                                                        var mUser = db.DepartmentManagers.Find(userFault.ManagerId);
+                                                                                                        User commenter = null;
+                                                                                                        if (pUser != null)
+                                                                                                        {
+                                                                                                            commenter = db.Users.Find(pUser.UserId);
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            commenter = db.Users.Find(mUser.UserId);
+                                                                                                        }
+                                                                                                    }
+                                                                                                    <img class="media-object" src="@commenter.UserPhotoUrl.Replace("~", "../..")" alt="@commenter.FirstName" width="35" height="35">
+                                                                                                </a>
+                                                                                            </div>
+                                                                                            <div class="media-body">
+                                                                                                <h4 class="media-heading">@(commenter.FirstName + " " + commenter.LastName)</h4>
+                                                                                                @comment.Text
+                                                                                            </div>
+                                                                                        </li>
+                                                                                                        }
+                                                                                    <li>
+                                                                                        <a href="#" onclick="collapseComments(@fault.FaultId);">
+                                                                                            <i class="fa fa-caret-up"></i>Hide Comments
+                                                                                        </a>
+                                                                                    </li>
+                                                                                </ul>
+                                                                                                        }
+
+                                                                                                        using (Html.BeginForm("MakeComment", "Faults", FormMethod.Post, new { @id = "commentForm" }))
+                                                                                                        {
+                                                                                                            <div class="form-group has-feedback">
+                                                                                                                <div class="input-group">
+                                                                                                                    <div type="submit" id="submitComment" class="input-group-btn">
+                                                                                                                        <button type="submit" class="btn btn-primary btn-block btn-flat">
+                                                                                                                            Comment
+                                                                                                                        </button>
+                                                                                                                    </div>
+                                                                                                                    <input class="form-control input-sm" type="text" name="CommentText" placeholder="Type a comment" />
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <input class="hidden" value="@fault.FaultId" name="faultId" />
+                                                                                                            }
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            if (managerUser.UserPhotoUrl != "")
+                                                                                                            {
+                                                                                                                <img class="img-circle img-bordered-sm" src="@managerUser.UserPhotoUrl.Replace("~", "../..")" alt="user image">
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                <img class="img-circle img-bordered-sm" src="../../Content/uploads/profiles/DefaultManager.png" alt="user image">
+                                                                                                            }
+                                                                                                            var comments = (from x in db.Comments where x.FaultId == fault.FaultId select x).ToList();
+                                                                                                            <span class="username">
+                                                                                                                <a href="#">@(managerUser.FirstName + " " + managerUser.LastName)</a>
+                                                                                                                <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                                                                                                            </span>
+                                                                                                            <span class="description">Report Lodged - @fault.DateCreated</span>
+                                                                                                            <p>@fault.Description</p>
+                                                                                                            <ul class="list-inline">
+                                                                                                                <li>
+                                                                                                                    <a href="#" onclick="showComments(@fault.FaultId);">
+                                                                                                                        <i class="fa fa-comments-o margin-r-5"></i> Comments
+                                                                                                                        (@comments.Count)
+                                                                                                                    </a>
+                                                                                                                </li>
+                                                                                                            </ul>
+
+                                                                                                            if (comments.Count != 0)
+                                                                                                            {
+                                                                                                                <ul id="@("commentList" + fault.FaultId)" class="hidden">
+                                                                                                                    @foreach (var comment in comments)
+                                                                                                                    {
+                                                                                                                        <li class="media">
+                                                                                                                            <div class="media-left">
+                                                                                                                                <a href="#">
+                                                                                                                                    @{ var userFault = (from x in db.Faults where x.FaultId == comment.FaultId select x).FirstOrDefault();
+                                                                                                                                        var pUser = db.PublicUsers.Find(userFault.PublicUserId);
+                                                                                                                                        var mUser = db.DepartmentManagers.Find(userFault.ManagerId);
+                                                                                                                                        User commenter = null;
+                                                                                                                                        if (pUser != null)
+                                                                                                                                        {
+                                                                                                                                            commenter = db.Users.Find(pUser.UserId);
+                                                                                                                                        }
+                                                                                                                                        else
+                                                                                                                                        {
+                                                                                                                                            commenter = db.Users.Find(mUser.UserId);
+                                                                                                                                        }
+                                                                                                                                    }
+                                                                                                                                    <img class="media-object" src="@commenter.UserPhotoUrl.Replace("~", "../..")" alt="@commenter.FirstName" width="35" height="35">
+                                                                                                                                </a>
+                                                                                                                            </div>
+                                                                                                                            <div class="media-body">
+                                                                                                                                <h4 class="media-heading">@(commenter.FirstName + " " + commenter.LastName)</h4>
+                                                                                                                                @comment.Text
+                                                                                                                            </div>
+                                                                                                                        </li>
+                                                                                                                                        }
+                                                                                                                    <li>
+                                                                                                                        <a href="#" onclick="collapseComments(@fault.FaultId);">
+                                                                                                                            <i class="fa fa-caret-up"></i>Hide Comments
+                                                                                                                        </a>
+                                                                                                                    </li>
+                                                                                                                </ul>
+                                                                                                                                        }
+                                                                                                                                        using (Html.BeginForm("MakeComment", "Faults", FormMethod.Post, new { @id = "commentForm" }))
+                                                                                                                                        {
+                                                                                                                                            <div class="form-group has-feedback">
+                                                                                                                                                <div class="input-group">
+                                                                                                                                                    <div type="submit" id="submitComment" class="input-group-btn">
+                                                                                                                                                        <button type="submit" class="btn btn-primary btn-block btn-flat">
+                                                                                                                                                            Comment
+                                                                                                                                                        </button>
+                                                                                                                                                    </div>
+                                                                                                                                                    <input class="form-control input-sm" type="text" name="CommentText" placeholder="Type a comment" />
+                                                                                                                                                </div>
+                                                                                                                                            </div>
+                                                                                                                                            <input class="hidden" value="@fault.FaultId" name="faultId" />
+                                                                                                                                            }
+
+                                                                                                                                        }
+
+                                                                    </div>
+                                                                </div>
+                                                                                                                                        }
+                                                                </div>
+                                            if (faultsToDump3.Any())
+                                            {
+                                                foreach (var f in faultsToDump3)
+                                                {
+                                                    faults.Remove(f);
+                                                }
+
+                                            }
+                                            if (faults.Any())
+                                            {
+                                                                        <div id="page4" class="hidden">
+                                                                        @foreach (var fault in faults.OrderByDescending(x => x.DateCreated).Take(4))
+                                                                        {
+                                                                            faultsToDump4.Add(fault);
+                                                                            <div class="post">
+                                                                                <div class="user-block">
+                                                                                    @{var deptMan = (from x in db.DepartmentManagers where x.DepartmentManagerId == fault.ManagerId select x).FirstOrDefault();
+                                                                                        User managerUser = null;
+                                                                                        if (deptMan != null)
+                                                                                        {
+                                                                                            managerUser = db.Users.Find(deptMan.UserId);
+                                                                                        }
+                                                                                    }
+                                                                                    @if (deptMan == null)
+                                                                                    {
+                                                                                        var comments = (from x in db.Comments where x.FaultId == fault.FaultId select x).ToList();
+                                                                                        <img class="img-circle img-bordered-sm" src="../../Content/uploads/profiles/DefaultManager.png" alt="user image">
+                                                                                        <span class="username">
+                                                                                            <a href="#">Unassigned</a>
+                                                                                            <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                                                                                        </span>
+                                                                                        <span class="description">Report Lodged - @fault.DateCreated</span>
+                                                                                        <p>@fault.Description</p>
+                                                                                        <ul class="list-inline">
+                                                                                            <li>
+                                                                                                <a href="#" onclick="showComments(@fault.FaultId);">
+                                                                                                    <i class="fa fa-comments-o margin-r-5"></i> Comments
+                                                                                                    (@comments.Count)
+                                                                                                </a>
+                                                                                            </li>
+                                                                                        </ul>
+                                                                                        if (comments.Count != 0)
+                                                                                        {
+                                                                                            <ul id="@("commentList" + fault.FaultId)" class="hidden">
+                                                                                                @foreach (var comment in comments)
+                                                                                                {
+                                                                                                    <li class="media">
+                                                                                                        <div class="media-left">
+                                                                                                            <a href="#">
+                                                                                                                @{ var userFault = (from x in db.Faults where x.FaultId == comment.FaultId select x).FirstOrDefault();
+                                                                                                                    var pUser = db.PublicUsers.Find(userFault.PublicUserId);
+                                                                                                                    var mUser = db.DepartmentManagers.Find(userFault.ManagerId);
+                                                                                                                    User commenter = null;
+                                                                                                                    if (pUser != null)
+                                                                                                                    {
+                                                                                                                        commenter = db.Users.Find(pUser.UserId);
+                                                                                                                    }
+                                                                                                                    else
+                                                                                                                    {
+                                                                                                                        commenter = db.Users.Find(mUser.UserId);
+                                                                                                                    }
+                                                                                                                }
+                                                                                                                <img class="media-object" src="@commenter.UserPhotoUrl.Replace("~", "../..")" alt="@commenter.FirstName" width="35" height="35">
+                                                                                                            </a>
+                                                                                                        </div>
+                                                                                                        <div class="media-body">
+                                                                                                            <h4 class="media-heading">@(commenter.FirstName + " " + commenter.LastName)</h4>
+                                                                                                            @comment.Text
+                                                                                                        </div>
+                                                                                                    </li>
+                                                                                                                    }
+                                                                                                <li>
+                                                                                                    <a href="#" onclick="collapseComments(@fault.FaultId);">
+                                                                                                        <i class="fa fa-caret-up"></i>Hide Comments
+                                                                                                    </a>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                                                    }
+
+                                                                                                                    using (Html.BeginForm("MakeComment", "Faults", FormMethod.Post, new { @id = "commentForm" }))
+                                                                                                                    {
+                                                                                                                        <div class="form-group has-feedback">
+                                                                                                                            <div class="input-group">
+                                                                                                                                <div type="submit" id="submitComment" class="input-group-btn">
+                                                                                                                                    <button type="submit" class="btn btn-primary btn-block btn-flat">
+                                                                                                                                        Comment
+                                                                                                                                    </button>
+                                                                                                                                </div>
+                                                                                                                                <input class="form-control input-sm" type="text" name="CommentText" placeholder="Type a comment" />
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                        <input class="hidden" value="@fault.FaultId" name="faultId" />
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                    else
+                                                                                                                    {
+                                                                                                                        if (managerUser.UserPhotoUrl != "")
+                                                                                                                        {
+                                                                                                                            <img class="img-circle img-bordered-sm" src="@managerUser.UserPhotoUrl.Replace("~", "../..")" alt="user image">
+                                                                                                                        }
+                                                                                                                        else
+                                                                                                                        {
+                                                                                                                            <img class="img-circle img-bordered-sm" src="../../Content/uploads/profiles/DefaultManager.png" alt="user image">
+                                                                                                                        }
+                                                                                                                        var comments = (from x in db.Comments where x.FaultId == fault.FaultId select x).ToList();
+                                                                                                                        <span class="username">
+                                                                                                                            @if (role == "Public User")
+                                                                                                                            {
+                                                                                                                                var fPUser = db.Users.Find(fault.PublicUser.UserId);
+                                                                                                                                <a href="#">@(fPUser.FirstName + " " + fPUser.LastName)</a>
+                                                                                                                            }
+                                                                                                                            else
+                                                                                                                            {
+                                                                                                                                <a href="#">@(managerUser.FirstName + " " + managerUser.LastName)</a>
+                                                                                                                            }
+                                                                                                                            <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                                                                                                                        </span>
+                                                                                                                        <span class="description">Report Lodged - @fault.DateCreated</span>
+                                                                                                                        <p>@fault.Description</p>
+                                                                                                                        <ul class="list-inline">
+                                                                                                                            <li>
+                                                                                                                                <a href="#" onclick="showComments(@fault.FaultId);" class="link-black text-sm">
+                                                                                                                                    <i class="fa fa-comments-o margin-r-5"></i> Comments
+                                                                                                                                    (@comments.Count)
+                                                                                                                                </a>
+                                                                                                                            </li>
+                                                                                                                        </ul>
+
+                                                                                                                        if (comments.Count != 0)
+                                                                                                                        {
+                                                                                                                            <ul id="@("commentList" + fault.FaultId)" class="hidden">
+                                                                                                                                @foreach (var comment in comments)
+                                                                                                                                {
+                                                                                                                                    <li class="media">
+                                                                                                                                        <div class="media-left">
+                                                                                                                                            <a href="#">
+                                                                                                                                                @{ var userFault = (from x in db.Faults where x.FaultId == comment.FaultId select x).FirstOrDefault();
+                                                                                                                                                    var pUser = db.PublicUsers.Find(userFault.PublicUserId);
+                                                                                                                                                    var mUser = db.DepartmentManagers.Find(userFault.ManagerId);
+                                                                                                                                                    User commenter = null;
+                                                                                                                                                    if (pUser != null)
+                                                                                                                                                    {
+                                                                                                                                                        commenter = db.Users.Find(pUser.UserId);
+                                                                                                                                                    }
+                                                                                                                                                    else
+                                                                                                                                                    {
+                                                                                                                                                        commenter = db.Users.Find(mUser.UserId);
+                                                                                                                                                    }
+                                                                                                                                                }
+                                                                                                                                                <img class="media-object" src="@commenter.UserPhotoUrl.Replace("~", "../..")" alt="@commenter.FirstName" width="35" height="35">
+                                                                                                                                            </a>
+                                                                                                                                        </div>
+                                                                                                                                        <div class="media-body">
+                                                                                                                                            <h4 class="media-heading">@(commenter.FirstName + " " + commenter.LastName)</h4>
+                                                                                                                                            @comment.Text
+                                                                                                                                        </div>
+                                                                                                                                    </li>
+                                                                                                                                                    }
+                                                                                                                                <li>
+                                                                                                                                    <a href="#" onclick="collapseComments(@fault.FaultId);">
+                                                                                                                                        <i class="fa fa-caret-up"></i>Hide Comments
+                                                                                                                                    </a>
+                                                                                                                                </li>
+                                                                                                                            </ul>
+                                                                                                                                                    }
+                                                                                                                                                    using (Html.BeginForm("MakeComment", "Faults", FormMethod.Post, new { @id = "commentForm" }))
+                                                                                                                                                    {
+                                                                                                                                                        <div class="form-group has-feedback">
+                                                                                                                                                            <div class="input-group">
+                                                                                                                                                                <div type="submit" id="submitComment" class="input-group-btn">
+                                                                                                                                                                    <button type="submit" class="btn btn-primary btn-block btn-flat">
+                                                                                                                                                                        Comment
+                                                                                                                                                                    </button>
+                                                                                                                                                                </div>
+                                                                                                                                                                <input class="form-control input-sm" type="text" name="CommentText" placeholder="Type a comment" />
+                                                                                                                                                            </div>
+                                                                                                                                                        </div>
+                                                                                                                                                        <input class="hidden" value="@fault.FaultId" name="faultId" />
+                                                                                                                                                        }
+
+                                                                                                                                                    }
+                                                                                    
+
+                                                                                </div>
+                                                                            </div>
+
+                                                                                                                                                    }
+                                                                            </div>
+                                            }
+                                        }
+                                }
+                                                                                                                                                       
+                                else
+                                {
+                                    if (role == "Organisation Manager")
+                                    {
+                                        <p style="text-align:center;">You have no faults reported - @Html.ActionLink("Start Managing Faults", "Dashboard", "Organisations", null, null)</p>
+
+                                    }
+                                    else if (role == "Department Manager")
+                                    {
+                                        <p style="text-align:center;">You have no faults reported - @Html.ActionLink("Start Managing Faults", "Management", "Departments", null, null)</p>
+
+                                    }
+                                    else
+                                    {
+                                        <p style="text-align:center;">You have no faults reported - @Html.ActionLink("Start Reporting", "ReportFault", "Faults", null, null)</p>
+                                    }
+
+                                }
+                        <div>
+                            <ul class="pagination">
+                            <li id="previousListItem">
+                                <a href="#" onclick="gotoPrevious()"><span aria-hidden="true">&laquo;</span></a>
+                            </li>
+                            <li id="listItem1" class="active">
+                                <a href="#" onclick="gotoPage1()">1</a>
+                                </li>
+                            <li id="listItem2">
+                                <a href="#" onclick="gotoPage2()">2</a>
+                                </li>
+                            <li id="listItem3">
+                                <a href="#" onclick="gotoPage3()">3</a>
+                                </li>
+                                <li id="listItem4">
+                                    <a href="#" onclick="gotoPage4()">4</a>
+                                </li>
+                                <li id="nextListItem">
+                                    <a href="#" onclick="gotoNext()">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- /.tab-pane -->
+                    <div class="tab-pane" id="timeline">
+                        @{
+                            //var Dates = (from x in db.Blogs orderby x.Date_Published descending where x.Featured == false && x.Enabaled group x by x.Date_Published.Date into t select new { day = t.Key }).ToList();
+                            var Dates = (from x in db.Blogs orderby x.Date_Published descending where x.Featured && x.Enabaled select x.Date_Published).ToList();
+                            List<string> DateStrings = new List<string>();
+                            foreach(var date in Dates)
+                            {
+                                var d = date.ToShortDateString();
+                                if (DateStrings.Count == 0)
+                                {
+                                    DateStrings.Add(d);
+                                }
+                                else
+                                {
+                                    if (!DateStrings.Contains(d))
+                                    {
+                                        DateStrings.Add(d);
+                                    }
+                                }
+                            }
+                            List<string> DatesFeaturedStrings = new List<string>();
+                            var DatesFeatured = (from x in db.Blogs orderby x.Date_Published descending where x.Featured && x.Enabaled select x.Date_Published).ToList();
+                            foreach (var date in DatesFeatured)
+                            {
+                                var d = date.ToShortDateString();
+                                if (DateStrings.Count == 0)
+                                {
+                                    DatesFeaturedStrings.Add(d);
+                                }
+                                else
+                                {
+                                    if (!DatesFeaturedStrings.Contains(d))
+                                    {
+                                        DatesFeaturedStrings.Add(d);
+                                    }
+                                }
+                            }
+                            }
+                        <!-- The timeline -->
+                        <ul class="timeline timeline-inverse">
+                            @if (DatesFeatured.Count != 0)
+                                        {
+                                            foreach (var date in DatesFeaturedStrings)
+                                            {
+                                                var year = Convert.ToInt32(date.Substring(0, 4));
+                                                var m = date.Split('/', '/')[1];
+                                            var month = Convert.ToInt32(m);
+                                            var day = Convert.ToInt32(date.Substring(date.Length-2));
+
+                                            DateTime today = new DateTime(year, month, day, 12, 0, 0);
+                                            var blogs = (from x in db.Blogs where DbFunctions.DiffDays(x.Date_Published, today) == 0 && x.Featured select x).ToList();
+                                    <li class="time-label">
+                                        <span class="bg-red">
+                                            @date
+                                        </span>
+                                    </li>
+                                    if (blogs.Count != 0)
+                                    {
+                                        foreach (var blog in blogs)
+                                        {
+                                            <li>
+                                                <i title="@date" class="fa fa-star bg-red"></i>
+                                                <div class="timeline-item">
+                                                    @{ var author = (from x in db.Users where x.Id == blog.AuthorId select x).FirstOrDefault();}
+                                                    <span class="time"><i class="fa fa-clock-o"></i> @blog.Date_Published.ToShortTimeString()</span>
+                                                    <h3 class="timeline-header"><a href="#">@(author.FirstName + " " + author.LastName)</a> - @blog.Title</h3>
+                                                    <div class="timeline-body">
+                                                        <div class="timeline-content">
+                                                            @Html.Raw(blog.Article.Substring(0, 350))
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="timeline-footer">
+                                                        @Html.ActionLink("Read More", "Article", "Blogs", new { id = blog.BlogId }, new { @class = "btn btn-primary btn-xs" })
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    }
+                                }
+                            }
+                            @if (Dates.Count != 0)
+                            {
+                                foreach (var date in DateStrings)
+                                {
+                                    var year = Convert.ToInt32(date.Substring(0, 4));
+                                    var m = date.Split('/', '/')[1];
+                                    var month = Convert.ToInt32(m);
+                                    var day = Convert.ToInt32(date.Substring(date.Length - 2));
+                                    DateTime today = new DateTime(year, month, day, 12, 0, 0);
+                                    var blogs = (from x in db.Blogs where DbFunctions.DiffDays(x.Date_Published,today) == 0 select x).ToList();
+                                    <li class="time-label">
+                                        <span class="bg-red">
+                                            @date
+                                        </span>                                        
+                                    </li>
+                                    if (blogs.Count != 0)
+                                    {
+                                        foreach (var blog in blogs)
+                                        {
+
+                                            <li>
+                                                <i title="@date" class="fa fa-user bg-blue"></i>
+                                                <div class="timeline-item">
+                                                    @{ var author = (from x in db.Users where x.Id == blog.AuthorId select x).FirstOrDefault();}
+                                                    <span class="time"><i class="fa fa-clock-o"></i> @blog.Date_Published.ToShortTimeString()</span>
+                                                    <h3 class="timeline-header"><a href="#">@(author.FirstName + " " + author.LastName)</a> - @blog.Title</h3>
+                                                    <div class="timeline-body">
+                                                        <div class="timeline-content">
+                                                            @Html.Raw(blog.Article.Substring(0, 350))
+                                                        </div>
+                                                    </div>                                                            
+                                                    <div class="timeline-footer">
+                                                        @Html.ActionLink("Read More", "Article", "Blogs", new { id = blog.BlogId }, new { @class = "btn btn-primary btn-xs" })
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    }
+                                }
+                            }
+                            <li>
+                                <i class="fa fa-clock-o bg-gray"></i>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- /.tab-pane -->
+
+                    <div class="tab-pane" id="settings">
+                        <h4>Change your account settings</h4>
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label for="inputName" class="col-sm-2 control-label">Password:</label>
+
+                                <div class="col-sm-10">
+                                    [
+                                    @if(Model.HasPassword)
+                                    {
+                                        @Html.ActionLink("Change your password", "ChangePassword")
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Create", "SetPassword")
+                                    }
+                                    ]
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEmail" class="col-sm-2 control-label">External Logins:</label>
+
+                                <div class="col-sm-10">
+                                    @Model.Logins.Count [@Html.ActionLink("Manage", "ManageLogins")]
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputName" class="col-sm-2 control-label">Phone Number:</label>
+
+                                <div class="col-sm-10">
+                                    @(Model.PhoneNumber ?? "None")
+                                    @if(Model.PhoneNumber != null)
+                            {
+                                        <br/>
+                                        <text>[&nbsp; &nbsp; @Html.ActionLink("Change", "AddPhoneNumber") & nbsp; &nbsp;]</text>
+                                        using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <text>[<input type="submit" value="Remove" class="btn-link" />]</text>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <text>[&nbsp;&nbsp;@Html.ActionLink("Add", "AddPhoneNumber")</text>
+                                    }
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputExperience" class="col-sm-2 control-label">Two-Factor Authentication:</label>
+
+                                <div class="col-sm-10">
+                                    <p>
+                                        There are no two-factor authentication providers configured.See<a href="http://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
+                                        for details on setting up this ASP.NET application to support two-factor authentication.
+                                    </p>
+                                    @*@if (Model.TwoFactor)
+                                        {
+                                            using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                <text>Enabled
+                                                <input type="submit" value="Disable" class="btn btn-link" />
+                                                </text>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                <text>Disabled
+                                                <input type="submit" value="Enable" class="btn btn-link" />
+                                                </text>
+                                            }
+                                        }*@
+                                </div>
+                            </div>                          
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox"> I agree to the <a href="#">terms and conditions</a>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" class="btn btn-danger">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.tab-pane -->
+                </div>
+                <!-- /.tab-content -->
+            </div>
+            <!-- /.nav-tabs-custom -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+</section>
+<!-- /.content -->
+<script type="text/javascript">
+
+    function EL(id) { return document.getElementById(id); } // Get el by ID helper function
+
+    function readFile() {
+        if (this.files && this.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function (e) {
+                EL("base64").value = e.target.result;
+                EL("saveBtn").setAttribute("class","btn btn-flat btn-primary center-block");
+                EL("user-img").setAttribute("src",e.target.result);
+            };
+            FR.readAsDataURL(this.files[0]);
+        }
+    }
+        
+    EL("imageUpload").addEventListener("change", readFile, false);
+   
+    function showComments(id) {
+        switch (id) {
+            @foreach (var item in allFaults)
+            {
+                var element = "commentList" + item.FaultId.ToString();
+                <text>
+            case @item.FaultId:
+                document.getElementById("@element").setAttribute('class','media-list');
+                break;
+                </text>
+            }
+        }
+    }
+    function collapseComments(id) {
+        switch(id){
+            @foreach(var item in allFaults)
+            {
+                var element = "commentList" + item.FaultId.ToString();
+                <text>
+            case @item.FaultId:
+                document.getElementById("@element").setAttribute('class','hidden');
+                break;
+                </text>
+            }
+        }
+    }
+
+    var previousListItem = document.getElementById('previousListItem');
+    if(document.getElementById('listItem1').getAttribute('class')=='active'){
+        previousListItem.setAttribute('class','disabled');
+    }
+
+    function gotoPage1(){
+        document.getElementById('page1').setAttribute('class','');
+        document.getElementById('page2').setAttribute('class','hidden');
+        document.getElementById('page3').setAttribute('class','hidden');
+        document.getElementById('page4').setAttribute('class','hidden');
+        document.getElementById('listItem1').setAttribute('class','active');
+        document.getElementById('listItem2').setAttribute('class','');
+        document.getElementById('listItem3').setAttribute('class','');
+        document.getElementById('listItem4').setAttribute('class','');
+
+    }
+    function gotoPage2(){
+        document.getElementById('page1').setAttribute('class','hidden');
+        document.getElementById('page2').setAttribute('class','');
+        document.getElementById('page3').setAttribute('class','hidden');
+        document.getElementById('page4').setAttribute('class','hidden');
+        document.getElementById('listItem1').setAttribute('class','');
+        document.getElementById('listItem2').setAttribute('class','active');
+        document.getElementById('listItem3').setAttribute('class','');
+        document.getElementById('listItem4').setAttribute('class','');
+    }
+    function gotoPage3(){
+        document.getElementById('page1').setAttribute('class','hidden');
+        document.getElementById('page2').setAttribute('class','hidden');
+        document.getElementById('page3').setAttribute('class','');
+        document.getElementById('page4').setAttribute('class','hidden');
+        document.getElementById('listItem1').setAttribute('class','');
+        document.getElementById('listItem2').setAttribute('class','');
+        document.getElementById('listItem3').setAttribute('class','active');
+        document.getElementById('listItem4').setAttribute('class','');
+    } 
+    function gotoPage4(){
+        document.getElementById('page1').setAttribute('class','hidden');
+        document.getElementById('page2').setAttribute('class','hidden');
+        document.getElementById('page3').setAttribute('class','hidden');
+        document.getElementById('page4').setAttribute('class','');
+        document.getElementById('listItem1').setAttribute('class','');
+        document.getElementById('listItem2').setAttribute('class','');
+        document.getElementById('listItem3').setAttribute('class','');
+        document.getElementById('listItem4').setAttribute('class','active');
+    }
+
+    function gotoNext(){
+        var list1 = document.getElementById('listItem1');
+        var list2 = document.getElementById('listItem2');
+        var list3 = document.getElementById('listItem3');
+        var list4 = document.getElementById('listItem4');
+        var nextButton = document.getElementById('nextListItem');
+        if(list1.getAttribute('class')=='active'){
+            document.getElementById('page1').setAttribute('class','hidden');
+            document.getElementById('page2').setAttribute('class','');
+            document.getElementById('page3').setAttribute('class','hidden');
+            document.getElementById('page4').setAttribute('class','hidden');
+            document.getElementById('listItem1').setAttribute('class','');
+            document.getElementById('listItem2').setAttribute('class','active');
+            document.getElementById('listItem3').setAttribute('class','');
+            document.getElementById('listItem4').setAttribute('class','');
+        }
+        else if(list2.getAttribute('class')=='active'){
+            document.getElementById('page1').setAttribute('class','hidden');
+            document.getElementById('page2').setAttribute('class','hidden');
+            document.getElementById('page3').setAttribute('class','');
+            document.getElementById('page4').setAttribute('class','hidden');
+            document.getElementById('listItem1').setAttribute('class','');
+            document.getElementById('listItem2').setAttribute('class','');
+            document.getElementById('listItem3').setAttribute('class','active');
+            document.getElementById('listItem4').setAttribute('class','');
+        }
+        else if(list3.getAttribute('class')=='active'){
+            document.getElementById('page1').setAttribute('class','hidden');
+            document.getElementById('page2').setAttribute('class','hidden');
+            document.getElementById('page3').setAttribute('class','hidden');
+            document.getElementById('page4').setAttribute('class','');
+            document.getElementById('listItem1').setAttribute('class','');
+            document.getElementById('listItem2').setAttribute('class','');
+            document.getElementById('listItem3').setAttribute('class','');
+            document.getElementById('listItem4').setAttribute('class','active');
+            nextButton.setAttribute('class','disabled');
+        }
+        else {
+
+        }       
+    }
+
+    function gotoPrevious(){
+        var list1 = document.getElementById('listItem1');
+        var list2 = document.getElementById('listItem2');
+        var list3 = document.getElementById('listItem3');
+        var list4 = document.getElementById('listItem4');
+        var previousButton = document.getElementById('previousListItem');
+        
+        if(list1.getAttribute('class')=='active'){
+           
+        }
+        else if(list2.getAttribute('class')=='active'){
+            document.getElementById('page1').setAttribute('class','');
+            document.getElementById('page2').setAttribute('class','hidden');
+            document.getElementById('page3').setAttribute('class','hidden');
+            document.getElementById('page4').setAttribute('class','hidden');
+            document.getElementById('listItem1').setAttribute('class','active');
+            document.getElementById('listItem2').setAttribute('class','');
+            document.getElementById('listItem3').setAttribute('class','');
+            document.getElementById('listItem4').setAttribute('class','');
+        }
+        else if(list3.getAttribute('class')=='active'){
+            document.getElementById('page1').setAttribute('class','hidden');
+            document.getElementById('page2').setAttribute('class','');
+            document.getElementById('page3').setAttribute('class','hidden');
+            document.getElementById('page4').setAttribute('class','hidden');
+            document.getElementById('listItem1').setAttribute('class','');
+            document.getElementById('listItem2').setAttribute('class','active');
+            document.getElementById('listItem3').setAttribute('class','');
+            document.getElementById('listItem4').setAttribute('class','');
+        }
+        else if(list4.getAttribute('class')=='active'){
+            document.getElementById('page1').setAttribute('class','hidden');
+            document.getElementById('page2').setAttribute('class','hidden');
+            document.getElementById('page3').setAttribute('class','');
+            document.getElementById('page4').setAttribute('class','hidden');
+            document.getElementById('listItem1').setAttribute('class','');
+            document.getElementById('listItem2').setAttribute('class','');
+            document.getElementById('listItem3').setAttribute('class','active');
+            document.getElementById('listItem4').setAttribute('class','');
+        }
+        else{
+            previousButton.setAttribute('class','disabled');
+        }
+    }
+    
+
+    $(function () {
+        $.contextMenu({
+            selector: '#profile-image',
+            callback: function (key, options) {
+                var m = "clicked: " + key;
+                window.console && console.log(m) || alert("Click on the image and upload a new profile picture.");
+            },
+            items: {
+                "Help!": { name: "Help!", icon: "edit" }
+            }
+        });
+
+        $('#profile-image').on('click', function (e) {
+            console.log('clicked', this);
+        })
+    });
+
+</script>

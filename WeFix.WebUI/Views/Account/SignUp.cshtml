@@ -1,0 +1,274 @@
+﻿@model WeFix.WebUI.Models.SignUpViewModel
+@{
+    ViewBag.Title = "Sign Up";
+    Layout = "~/Views/Shared/_StartUp.cshtml";
+}
+@{ 
+    var db = new WeFix.Domain.Context.EFDbContext();
+    var countries = (from x in db.Countries select x).ToList();
+    var selectItemList = new SelectList(countries, "CountryAccessCode", "CountryName", "+27");
+}
+    <div class="register-box" style="z-index:5; position:relative;">
+        <div class="register-logo">
+            <a style="color:#fff;" href="#">We<b>Fix</b></a>
+        </div>
+
+        <div class="register-box-body">
+            <p class="login-box-msg">Register a new membership</p>
+            
+            
+            <ul id="tabs" class="nav nav-tabs" style="z-index:2;" data-tabs="tabs">
+                <li role="presentation" class="active">
+                    <a href="#no-content" id="no-contentTab" data-toggle="tab">
+                        As Public
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#orgData" id="orgDataTab" data-toggle="tab">
+                        As Organisation
+                    </a>
+                </li>
+            </ul>
+            @using (Html.BeginForm("SignUp", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form", @name="SignUpForm" }))
+            {
+                @Html.AntiForgeryToken() 
+               
+                <div class="tab-content">
+                    <div class="tab-pane active fade in" id="no-content">
+
+                    </div>
+                    <div class="tab-pane fade" id="orgData">
+                        <div class="form-group has-feedback">
+                            <div class="checkbox">
+                                <label>@Html.CheckBoxFor(m => m.IsManager, new { @id = "checkButton" })Register a new Organisation</label>
+                                
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group has-feedback">
+                            @Html.TextBoxFor(m => m.OrganisationName, new { @class = "form-control disabled", @id = "orgText", @disabled = "disabled", @placeholder = "Organisation Name" })
+                            <span class="glyphicon glyphicon-home form-control-feedback"></span>
+                            @Html.ValidationMessageFor(m=>m.OrganisationName,"",new { @class="text-danger" })
+                        </div>
+                    </div>
+               </div>
+                    <div>
+                        
+                        <div class="form-group has-feedback">
+                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @placeholder = "First Name", @id="firstNameText" })
+                            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                            @Html.ValidationMessageFor(m => m.FirstName, "", new { @class="text-danger"})
+                        </div>
+                        <div class="form-group has-feedback">
+                            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @placeholder = "Last Name", @id="lastNameText" })
+                            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                            @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group has-feedback">
+                            <table>
+                                <tr>
+                                    <td style="width:30%">
+                                        @Html.DropDownList("CountryCode", selectItemList, htmlAttributes: new { @class = "form-control", @style = "padding:0;", @id="countryCodeSelect" })
+                                    </td>
+                                    <td style="width:10%">
+                                        <input type="text" style="padding:0px; text-align:center;" value="(0)" readonly="readonly" disabled="disabled" class="form-control" />
+                                    </td>
+                                    <td style="width:60%">
+                                        @Html.TextBoxFor(m => m.Cell, new { @class = "form-control", @id="cellText" })
+                                        <span class="glyphicon glyphicon-phone form-control-feedback"></span> 
+                                        @Html.ValidationMessageFor(m => m.Cell, "", new { @class = "text-danger" })
+                                    </td>
+                                </tr>
+                            </table>                   
+                        </div>
+                        <div class="form-group has-feedback">
+                                <div class="input-group">
+                                    <label class="input-group-btn">
+                                        <span class="btn btn-primary btn-block btn-flat">
+                                            Browse… <input type="file" style="display:none" name="UserPhoto" onchange="displayName()" id="fileUpload" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                                        </span>
+                                    </label>
+                                    <input type="text" class="form-control" id="uploadText" readonly="" placeholder="Upload Profile Image">
+                                </div>
+                                <input type="hidden" id="base64" name="base64" />
+                        </div>
+                        <div class="form-group has-feedback">
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Email", @id="emailText", @name="EmailText" })
+                            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group has-feedback">
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Password", @id="passwordText" })
+                            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group has-feedback">
+                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", @placeholder = "Confirm Password", @id="confirmPasswordText" })
+                            <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+                            <label class="text-danger">@ViewBag.ErrorMessage</label>
+                           
+                        </div>                        
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox"> I agree to the @Html.ActionLink("terms","Terms","Home",null,null)
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-xs-4">
+                                @*<button type="button" onclick="validateFields()" class="btn btn-primary btn-block btn-flat">Register</button>*@
+                                <input type="submit" id="submitForm" value="Register" class="btn btn-primary btn-block btn-flat"/>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                    </div>
+            }
+            <div class="social-auth-links text-center">
+                <p>- OR -</p>
+                <section id="socialLoginForm">
+                    @Html.Partial("_ExternalLoginsListPartial", new WeFix.WebUI.Models.ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+                </section>
+            </div>
+
+            <a href="#" onclick="location.href='@Url.Action("Login","Account",null)'" class="text-center">I already have a membership</a>
+        </div>
+        <!-- /.form-box -->
+    </div>
+    <!-- /.register-box -->    
+    <script type="text/javascript">
+        //var firstName = document.getElementById('firstNameText');
+        //var lastName = document.getElementById('lastNameText');
+        //var countrySelect = document.getElementById('countryCodeSelect');
+        //var phone = document.getElementById('cellText');
+        //var email = document.getElementById('emailText');
+        //var password = document.getElementById('passwordText');
+        //var confirmPassword = document.getElementById('confirmPasswordText');
+        //var FirstNameLabel = document.getElementById('FirstNameLabel');
+        //var LastNameLabel = document.getElementById('LastNameLabel');
+        //var PhoneNumberLabel = document.getElementById('PhoneNumberLabel');
+        //var EmailLabel = document.getElementById('EmailLabel');
+        //var PasswordLabel = document.getElementById('PasswordLabel');
+        //var PasswordConfirmLabel = document.getElementById('PasswordConfirmLabel');
+        //var submitForm = document.getElementById('submitForm');
+        //var emailNullLabel = document.getElementById('EmailNullLabel');        
+
+        //function validateFields() {
+        //    var isFirstValid = false;
+        //    var isLastValid = false;
+        //    var isCellValid = false;
+        //    var isEmailValid = false;
+        //    var isPasswordValid = false;
+        //    var isConfirmPasswordValid = false;
+        //    var isEmailNullValid = false;
+
+        //    if (!firstName || firstName.toString().length === 0) {
+        //        isFirstValid = false;
+        //        FirstNameLabel.textContent = "Firstname is required!";
+        //        FirstNameLabel.setAttribute('class', 'text-danger');
+        //    }
+        //    else if(firstName||firstName.toString().length >=0) {
+        //        isFirstValid = true;
+        //    }
+        //    else if (!lastName || lastName.toString().length === 0) {
+        //        isLastValid = false;
+        //        LastNameLabel.textContent = "Lastname is required";
+        //        LastNameLabel.setAttribute('class', 'text-danger');
+        //    }
+        //    else if (lastName || lastName.toString().length>=0){
+        //        isLastValid = true;
+        //    }
+        //    else if(!email||email.toString().length == 0){
+        //        isEmailNullValid = false;
+        //        emailNullLabel.textContent = "Email is Required!";
+        //        emailNullLabel.setAttribute('class','text-danger');
+        //    }
+        //    else if(email||email.toString().length>=0){
+        //        isEmailNullValid=true;
+        //    }
+        //    else if (!email.toString().indexOf('@@')) {
+        //        isEmailValid = false;
+        //        EmailLabel.textContent = "Email is invalid";
+        //        EmailLabel.setAttribute('class','text-danger');
+        //    }
+        //    else if (atpos>1||dotpos>atpos+2||dotpos+2<=x.length){
+        //        isEmailValid = true;
+        //    }
+        //    else if(password.toString().length<6){
+        //        isPasswordValid = false;
+        //        PasswordLabel.textContent = "Password is too short!";
+        //        PasswordLabel.setAttribute('class','text-danger');
+        //    }
+        //    else if (password.toString().length >= 6) {
+        //        isPasswordValid = true;
+        //    }
+        //    else if(confirmPassword != password){
+        //        isConfirmPasswordValid = false;
+        //        PasswordConfirmLabel.textContent = "Passwords don't match!";
+        //        PasswordConfirmLabel.setAttribute('class','text-danger');
+        //    }
+        //    else if (confirmPassword == password) {
+        //        isConfirmPasswordValid=true;
+        //    }
+        //    if(isFirstValid == true && isLastValid == true && isEmailValid == true && isPasswordValid == true && isConfirmPasswordValid == true && isEmailNullValid == true){
+        //        submitForm.click.apply(submitForm);
+        //    }
+        //}
+
+
+        $(function () {
+            $('#checkButton').click(function () {
+                if ($(this).is(':checked')) {
+                    $('#orgButton').removeAttr('disabled');
+                    $('#orgText').removeAttr('disabled');
+                    $('#orgText').attr('class', 'form-control');
+                    $('#orgButton').attr('class', 'btn btn-guardian');
+                } else {
+                    $('#orgButton').attr('disabled', 'disabled');
+                    $('#orgText').attr('disabled', 'disabled')
+                    $('#orgText').attr('class', 'form-control disabled');
+                    $('#orgButton').attr('class', 'btn btn-guardian disabled');
+                }
+            });
+        });
+
+        function displayName() {
+            var x = document.getElementById("fileUpload");
+            var txt = "";
+            if ('files' in x) {
+                if (x.files.length == 0) {
+                    txt = "Select one or more files.";
+                } else {
+                    for (var i = 0; i < x.files.length; i++) {
+                        var file = x.files[i];
+                        if ('name' in file) {
+                            txt += file.name;
+                        }
+                        if ('size' in file) {
+                            txt += " [" + file.size + "]";
+                        }
+                    }
+                }
+            }
+            document.getElementById("uploadText").value = txt;
+        }
+       
+
+       
+        function EL(id) { return document.getElementById(id); } // Get el by ID helper function
+
+        function readFile() {
+            if (this.files && this.files[0]) {
+                var FR = new FileReader();
+                FR.onload = function (e) {
+                    EL("base64").value = e.target.result;
+                };
+                FR.readAsDataURL(this.files[0]);
+            }
+        }
+        
+        EL("fileUpload").addEventListener("change", readFile, false);
+
+
+    </script>

@@ -1,0 +1,30 @@
+﻿@model WeFix.WebUI.Models.ExternalLoginListViewModel
+@using Microsoft.Owin.Security
+<hr />
+@{
+    var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+   
+        using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl })) {
+            @Html.AntiForgeryToken()
+            <div id="socialLoginList">
+                <p>
+                    @foreach (AuthenticationDescription p in loginProviders)
+                    {
+                        if (p.AuthenticationType == "Google")
+                        {
+                            <button type="submit" class="btn btn-block btn-social btn-google center-block" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><span class="fa fa-google"></span>Sign in with Google</button>
+                        }
+                        else if (p.AuthenticationType == "Facebook")
+                        {
+                            <button type="submit" class="btn btn-block btn-social btn-facebook center-block" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><span class="fa fa-facebook"></span>Sign in with Facebook</button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-block btn-social btn-social btn-default center-block" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account">@p.AuthenticationType</button>
+                        }
+
+                    }
+                </p>
+            </div>        
+    }
+}

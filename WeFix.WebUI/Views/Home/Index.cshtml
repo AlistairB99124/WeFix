@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "Landing";
+    Layout = "~/Views/Shared/_StartUp.cshtml";
+}
+<div class="login-box" style="z-index:5; position:relative;">
+    <div class="login-logo">
+        <a style="color:#fff;" href="#">We<b>Fix</b></a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="login-box-body"> 
+        <p class="login-box-msg">
+            Are you sick and tired of potholes, broken traffic lights and other infrastructural faults? Let the WeFixers do the dirty work! Use our application to report any infrastructural faults and have them sent directly to those responsible to be dealt with in record time. There are incentives involved, so get reporting!
+        </p>
+        <p class="login-box-msg">
+            WeFix is a mobile application designed for the convenience of ordinary citizens such as yourself in order to report any infrastructural faults that you may come across. WeFix acts as the middle man and passes your complaint directly on to those responsible for sorting it out.
+        </p>
+        <p class="login-box-msg">
+            WeFix is designed by third year Information Systems students at The University of Cape Town and is sponsored by OpenBox Software.
+        </p>         
+            <div class="row">
+                <div class="col-xs-6">
+                    @Html.ActionLink("Sign Up", "SignUp", "Account", null, new { @class= "btn btn-primary btn-block btn-flat" })
+                </div>
+                <!-- /.col -->
+                <div class="col-xs-6">
+                    @Html.ActionLink("Sign In", "Login", "Account", null, new { @class = "btn btn-primary btn-block btn-flat" })
+                </div>
+                <!-- /.col -->
+            </div>       
+    </div>
+    <!-- /.login-box-body -->
+</div>
+<!-- /.login-box -->

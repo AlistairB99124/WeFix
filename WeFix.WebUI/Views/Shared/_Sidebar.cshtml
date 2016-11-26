@@ -1,0 +1,56 @@
+﻿@using WeFix.Domain.Context
+@using WeFix.Domain.Entities
+@using Microsoft.AspNet.Identity
+@{ 
+    var db = new EFDbContext();
+    var randomUserId = HttpContext.Current.User.Identity.GetUserId();
+    var randomUser = (from x in db.PublicUsers where x.UserId == randomUserId select x).FirstOrDefault();
+}
+<aside class="main-sidebar" style="background:#fff;line-height:1.42857143;position:fixed;">
+    <section class="sidebar">
+        @* BEGIN Search *@
+            @using(Html.BeginForm("Search","Home",FormMethod.Post,new {@class="sidebar-form" })) { 
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search...">
+                    <span class="input-group-btn">
+                        <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+            }
+        @* END Search *@
+        @* BEGIN Menu *@
+        <ul class="sidebar-menu">
+            <li class="header">Main Navigation</li>
+            <li><a href="#" onclick="location.href='@Url.Action("Index","Manage",null)'"><i class="fa fa-home"></i> <span>Home</span></a></li>
+            <li><a href="#" onclick="location.href='@Url.Action("About","Home",null)'"><i class="fa fa-info"></i> <span>About Us</span></a></li>
+            @if (randomUser != null)
+            {
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-bullseye"></i> <span>Fault</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li>@Html.ActionLink("Report", "ReportFault", "Faults", null, null)</li>
+                        <li>@Html.ActionLink("Review", "PublicIndex", "Faults", null, null)</li>
+                    </ul>
+                </li>
+            }           
+            <li><a href="#" onclick="location.href='@Url.Action("Contact","Home",null)'"><i class="fa fa-phone"></i><span>Contact Us</span></a></li>
+        </ul>
+        <ul class="sidebar-menu" style="position:absolute;bottom:0;left:0;position:fixed;">
+            <li>
+                <a href="#" onclick="location.href='@Url.Action("Privacy","Home")'"><i class="fa fa-lock"></i> <span>Privacy Policy</span></a>
+            </li>
+            <li>
+                <a href="#" onclick="location.href='@Url.Action("TermsAndConditions","Home")'"><i class="fa fa-cogs"></i> <span>Terms and Conditions</span></a>
+            </li>
+        </ul>
+        @* END Menu *@
+    </section>
+   
+</aside>

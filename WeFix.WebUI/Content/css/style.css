@@ -1,0 +1,33 @@
+/* ============================================================
+  COMMON
+============================================================ */
+.cmn-toggle {
+  position: absolute;
+  margin-left: -9999px;
+  visibility: hidden;
+}
+.cmn-toggle + label {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* ============================================================
+  RADIO BUTTON IMAGE FLIPPING WHEN SELECTED
+============================================================ */         
+.switch > label > .imgBack {
+    display: none;
+}
+
+.switch > input[type='radio']:checked + label > .imgFront {
+    display: none;
+}
+
+.switch > input[type='radio']:checked + label > .imgBack {
+    display: block;
+}

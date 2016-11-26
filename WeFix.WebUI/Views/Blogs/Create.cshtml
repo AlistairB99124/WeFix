@@ -1,0 +1,126 @@
+﻿@model WeFix.Domain.Entities.Blog
+
+@{
+    ViewBag.Title = "Blog";
+    Layout = "~/Views/Shared/_AdminLTELayout.cshtml";
+}
+@using (Html.BeginForm()) { 
+<div class="row">
+    <div class="col-sm-8">
+        @Html.AntiForgeryToken()
+        <div class="form-group has-feedback">
+            <label for="titleText">Title</label>
+            @Html.TextBoxFor(m => m.Title, new { @class="form-control", @id="titleText" })
+        </div>
+        <div class="form-group has-feedback">
+            <label for="fileUpload">Banner Image (Optional)</label>
+            <div class="input-group">
+                <label class="input-group-btn">
+                    <span class="btn btn-primary btn-block btn-flat">
+                        Browse… <input type="file" style="display:none" name="fileUpload" onchange="displayName()" id="fileUpload" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                    </span>
+                </label>
+                <input type="text" class="form-control" id="uploadText" readonly="" placeholder="Upload Image">
+            </div>
+            <input type="hidden" id="base64" name="base64" />
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>
+                        @Html.CheckBoxFor(m => m.Enabaled) Publish?
+                    </label>                        
+                </div>
+                <div class="form-group">
+                    <label>
+                        @Html.CheckBoxFor(m => m.Featured) Get Featured?
+                    </label>                        
+                </div>
+            <div class="form-group">
+                <label>
+                    @Html.CheckBoxFor(m => m.CommentsEnabled) Enable Comments?
+                </label>                   
+            </div>
+                </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <input type="submit" class="btn btn-primary btn-block btn-flat" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">
+                    Content
+                    <small>Simple and fast</small>
+                </h3>
+                <!-- tools box -->
+                <div class="pull-right box-tools">
+                    <button type="button" class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm" data-widget="remove" data-toggle="tooltip" title="Remove">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <!-- /. tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body pad">
+                @Html.TextAreaFor(m=>m.Article,new { @class="textarea", @placeholder= "Place some text here", @style= "width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;color:#333" })
+            </div>
+        </div>
+        <!-- /.box -->
+    </div>
+</div>
+}
+<script src="~/Content/js/plugins/WysiHtml5/WysiHtml5.js"></script>
+<script type="text/javascript">
+    $(function () {
+        //bootstrap WYSIHTML5 - text editor
+        $(".textarea").wysihtml5();
+    });
+
+    function displayName() {
+        var x = document.getElementById("fileUpload");
+        var txt = "";
+        if ('files' in x) {
+            if (x.files.length == 0) {
+                txt = "Select one or more files.";
+            } else {
+                for (var i = 0; i < x.files.length; i++) {
+                    var file = x.files[i];
+                    if ('name' in file) {
+                        txt += file.name;
+                    }
+                    if ('size' in file) {
+                        txt += " [" + file.size + "]";
+                    }
+                }
+            }
+        }
+        document.getElementById("uploadText").value = txt;
+    }
+
+
+    function EL(id) { return document.getElementById(id); } // Get el by ID helper function
+
+    function readFile() {
+        if (this.files && this.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function (e) {
+                EL("base64").value = e.target.result;
+            };
+            FR.readAsDataURL(this.files[0]);
+        }
+    }
+
+    EL("fileUpload").addEventListener("change", readFile, false);
+
+</script>
